@@ -1,18 +1,32 @@
-#!/usr/local/bin/php -f
 <?php
+
+namespace RPurinton\Discommand2;
+
+require_once(__DIR__ . "/ConfigLoader.php");
+
+class BunnyPublisher extends ConfigLoader
+{
+    private $bunny;
+    private $channel;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->bunny = new \Bunny\Client($this->config['bunny']);
+        $this->bunny->connect();
+        $this->channel = $this->bunny->channel();
+    }
+
+    public function publish($queue, $json_string)
+    {
+        $this->channel->publish($json_string, [], '', $queue);
+        $this->channel->close();
+        $this->bunny->disconnect();
+    }
+}
 
 if (!isset($argv[1])) die("Usage: php src/BunnyPublisher.php <queue>\nThen send JSON string on STDIN\n");
 $queue = $argv[1];
 $json_string = file_get_contents("php://stdin");
-publish($queue, $json_string);
-
-function publish($queue, $json_string)
-{
-    require_once(__DIR__ . "/vendor/autoload.php");
-    $bunny = new \Bunny\Client(json_decode(file_get_contents(__DIR__ . "/conf.d/bunny.json"), true));
-    $bunny->connect();
-    $channel = $bunny->channel();
-    $channel->publish($json_string, [], '', $queue);
-    $channel->close();
-    $bunny->disconnect();
-}
+$bunnyPublisher = new BunnyPublisher();
+$bunnyPublisher->publish($queue, $json_string);
