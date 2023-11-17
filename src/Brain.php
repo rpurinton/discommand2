@@ -13,6 +13,10 @@ class Brain extends ConfigLoader
         parent::__construct();
         $this->bunny = new BunnyConsumer($this->myName);
         $this->bunny->publish($this->myName, ["name" => $this->myName, "type" => "register"]);
+    }
+
+    public function run()
+    {
         $this->bunny->run($this->inbox(...));
     }
 
@@ -22,3 +26,9 @@ class Brain extends ConfigLoader
         return true;
     }
 }
+
+if (!isset($argv[1])) die("Usage: php src/Brain.php <name>\n");
+$myName = $argv[1];
+
+$brain = new Brain($myName);
+$brain->run();
