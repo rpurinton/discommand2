@@ -6,15 +6,19 @@ require_once(__DIR__ . "/BunnyConsumer.php");
 
 class Brain extends ConfigLoader
 {
+    private $bunny = null;
+
     public function __construct(private $myName)
     {
         parent::__construct();
-        new BunnyConsumer($this->myName, $this->inbox(...));
+        $this->bunny = new BunnyConsumer($this->myName);
+        $this->bunny->publish($this->myName, ["name" => $this->myName, "type" => "register"]);
+        $this->bunny->run($this->inbox(...));
     }
 
-    private function inbox(string $message): bool
+    private function inbox($message): bool
     {
-        echo "Received: " . json_encode($message) . "\n";
+        print_r($message);
         return true;
     }
 }
