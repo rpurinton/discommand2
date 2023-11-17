@@ -6,17 +6,26 @@ require_once(__DIR__ . "/ConfigLoader.php");
 
 class BunnyConsumer extends ConfigLoader
 {
-	private $queue = null;
-	private $channel = null;
-	private $callback = null;
+	private $queue;
+	private $channel;
+	private $callback;
 
-	function __construct($loop, $queue, $callback)
+	public function __construct($loop, $queue, $callback)
 	{
 		parent::__construct();
 		$this->queue = $queue;
 		$this->callback = $callback;
 		$client = new \Bunny\Async\Client($loop, $this->config["bunny"]);
-		$client->connect()->then($this->getChannel(...))->then($this->consume(...));
+		$client->connect()->then(function ($client) {
+			return $this->getChannel($client);
+		})->then(function ($channel) {
+			return $this->consume($channel);
+		});
+	}
+
+	public function __destruct()
+	{
+		$this->channel->close();
 	}
 
 	private function getChannel($client)
@@ -28,18 +37,19 @@ class BunnyConsumer extends ConfigLoader
 	{
 		$this->channel = $channel;
 		$channel->qos(0, 1);
-		$channel->consume($this->process(...), $this->queue);
-	}
-
-	private function close()
-	{
-		$this->channel->close();
+		$channel->queueDeclare($this->queue);
+		$channel->consume(function ($message, $channel, $client) {
+			return $this->process($message, $channel, $client);
+		}, $this->queue);
 	}
 
 	private function process($message, $channel, $client)
 	{
-		if (($this->callback)(json_decode($message->content, true))) $channel->ack($message);
-		else $channel->nack($message);
+		if (($this->callback)(json_decode($message->content, true))) {
+			$channel->ack($message);
+		} else {
+			$channel->nack($message);
+		}
 	}
 
 	public static function publish($queue, $data)
