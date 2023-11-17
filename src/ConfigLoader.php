@@ -2,6 +2,8 @@
 
 namespace RPurinton\Discommand2;
 
+require_once(__DIR__ . "/vendor/autoload.php");
+
 class ConfigLoader
 {
     protected $config = [];
