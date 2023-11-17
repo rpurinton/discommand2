@@ -6,26 +6,24 @@ require_once(__DIR__ . "/ConfigLoader.php");
 
 class BunnyConsumer extends ConfigLoader
 {
-	private $queue;
 	private $channel;
 	private $callback;
 
-	public function __construct($queue, $callback)
+	public function __construct(private $queue)
 	{
 		parent::__construct();
-		$this->queue = $queue;
-		$this->callback = $callback;
-		$client = new \Bunny\Async\Client(\React\EventLoop\Loop::get(), $this->config["bunny"]);
-		$client->connect()->then(function ($client) {
-			return $this->getChannel($client);
-		})->then(function ($channel) {
-			return $this->consume($channel);
-		});
 	}
 
 	public function __destruct()
 	{
 		$this->channel->close();
+	}
+
+	public function run(callable $callback): void
+	{
+		$this->callback = $callback;
+		$client = new \Bunny\Async\Client(\React\EventLoop\Loop::get(), $this->config["bunny"]);
+		$client->connect()->then($this->getChannel(...))->then($this->consume(...));
 	}
 
 	private function getChannel($client)
@@ -38,9 +36,7 @@ class BunnyConsumer extends ConfigLoader
 		$this->channel = $channel;
 		$channel->qos(0, 1);
 		$channel->queueDeclare($this->queue);
-		$channel->consume(function ($message, $channel, $client) {
-			return $this->process($message, $channel, $client);
-		}, $this->queue);
+		$channel->consume($this->process(...), $this->queue);
 	}
 
 	private function process($message, $channel, $client)
