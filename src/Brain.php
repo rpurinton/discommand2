@@ -9,7 +9,7 @@ class Brain extends ConfigLoader
     public function __construct()
     {
         parent::__construct();
-        new BunnyConsumer(\React\EventLoop\Loop::get(), "test", [$this, "inbox"]);
+        new BunnyConsumer(\React\EventLoop\Loop::get(), "test", $this->inbox(...));
     }
 
     private function inbox(string $message): bool
