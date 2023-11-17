@@ -10,12 +10,12 @@ class BunnyConsumer extends ConfigLoader
 	private $channel;
 	private $callback;
 
-	public function __construct($loop, $queue, $callback)
+	public function __construct($queue, $callback)
 	{
 		parent::__construct();
 		$this->queue = $queue;
 		$this->callback = $callback;
-		$client = new \Bunny\Async\Client($loop, $this->config["bunny"]);
+		$client = new \Bunny\Async\Client(\React\EventLoop\Loop::get(), $this->config["bunny"]);
 		$client->connect()->then(function ($client) {
 			return $this->getChannel($client);
 		})->then(function ($channel) {
