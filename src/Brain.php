@@ -6,10 +6,10 @@ require_once(__DIR__ . "/BunnyConsumer.php");
 
 class Brain extends ConfigLoader
 {
-    public function __construct()
+    public function __construct(private $myName)
     {
         parent::__construct();
-        new BunnyConsumer(\React\EventLoop\Loop::get(), "test", $this->inbox(...));
+        new BunnyConsumer(\React\EventLoop\Loop::get(), $this->myName, $this->inbox(...));
     }
 
     private function inbox(string $message): bool
