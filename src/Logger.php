@@ -56,7 +56,8 @@ class Logger
                 'DEBUG'     => 'debug',
                 default     => 'info',
             };
-            exec("echo '$log_message' | systemd-cat -t discommand2 -p $syslogPriority");
+            $log_message = escapeshellarg($log_message);
+            exec("echo $log_message | systemd-cat -p $syslogPriority -t discommand2");
         }
     }
 }
