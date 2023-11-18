@@ -47,9 +47,7 @@ class BunnyConsumer extends ConfigLoader
 
 	private function process(Message $message, Channel $channel, Client $client)
 	{
-		if (($this->callback)(json_decode($message->content, true))) {
-			return $channel->ack($message);
-		}
+		if (($this->callback)($message->content)) return $channel->ack($message);
 		$channel->nack($message);
 	}
 
