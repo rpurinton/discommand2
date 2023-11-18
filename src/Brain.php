@@ -9,19 +9,19 @@ class Brain extends ConfigLoader
 {
     private LoopInterface $loop;
     private $bunny;
+    private $logger;
 
     public function __construct(private $myName)
     {
-        Logger::log("Brain Construct");
         parent::__construct();
+        $this->logger = new Logger($this->config["logger"]["log_dir"]);
         $this->loop = Loop::get();
         $this->bunny = new BunnyConsumer($this->loop, $myName, $this->inbox(...));
     }
 
     private function inbox($message): bool
     {
-        Logger::log("Brain Inbox");
-        Logger::log(print_r($message, true));
+        $this->logger->log("Received message: " . json_encode($message, JSON_PRETTY_PRINT));
         return true;
     }
 }

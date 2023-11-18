@@ -4,16 +4,27 @@ namespace RPurinton\Discommand2;
 
 class Logger
 {
-    private static $log_dir = __DIR__ . '/../logs.d';
+    private float $last_microttime = 0;
 
-    public static function log($message)
+    public function __construct(private string $log_dir = __DIR__ . '/../logs.d')
     {
-        if (!is_dir(self::$log_dir)) mkdir(self::$log_dir, 0777, true);
+        $this->last_microttime = microtime(true);
 
-        $log_file = self::$log_dir . '/' . date('Y-m-d') . '.log';
-        $message = "[" . date('Y-m-d H:i:s') . '.' . substr(number_format(microtime(true), 6, '.', ''), -6) . "] $message\n";
+        if (!is_dir($this->log_dir)) mkdir($this->log_dir);
 
-        file_put_contents($log_file, $message, FILE_APPEND);
-        echo $message;
+        $this->log("Logger initialized.");
+    }
+
+    public function log($message)
+    {
+        $microtime = microtime(true);
+        $diff = $microtime - $this->last_microttime;
+        $this->last_microttime = $microtime;
+        $diff = number_format($diff, 6, '.', '') . 's';
+        $log_file = $this->log_dir . '/' . date('Y-m-d') . '.log';
+        $log_message = "[" . date('Y-m-d H:i:s') . '.' . substr(number_format(microtime(true), 6, '.', ''), -6) . "] ($diff) $message\n";
+
+        file_put_contents($log_file, $log_message, FILE_APPEND);
+        echo "($diff) $message\n";
     }
 }
