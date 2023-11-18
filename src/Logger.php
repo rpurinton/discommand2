@@ -7,9 +7,8 @@ use RPurinton\Discommand2\Exceptions\LogException;
 class Logger
 {
     private float $last_microttime = 0;
-    private string $log_dir;
 
-    public function __construct(string $log_dir = __DIR__ . '/../logs.d')
+    public function __construct(private string $log_dir = __DIR__ . '/../logs.d')
     {
         $this->last_microttime = microtime(true);
         // Simulate a failure condition for testing purposes
