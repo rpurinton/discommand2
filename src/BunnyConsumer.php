@@ -47,7 +47,8 @@ class BunnyConsumer extends ConfigLoader
 
 	private function process(Message $message, Channel $channel, Client $client)
 	{
-		if (($this->callback)($message->headers, $message->content)) return $channel->ack($message);
+		$message->headers["content"] = $message->content;
+		if (($this->callback)($message->headers)) return $channel->ack($message);
 		$channel->nack($message);
 	}
 
