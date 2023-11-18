@@ -1,3 +1,4 @@
+#!/usr/bin/php -f
 <?php
 
 $brainName = $argv[1] ?? null;

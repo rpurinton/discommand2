@@ -6,3 +6,4 @@ logs.d/
 *~
 .DS_Store
 /test*.php
+.phpunit*
