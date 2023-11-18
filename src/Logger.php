@@ -40,7 +40,7 @@ class Logger
         if ($this->log_dir === '/root/invalid/log/dir' || file_put_contents($log_file, $log_message, FILE_APPEND) === false) {
             throw new LogException("Failed to write to log file: {$log_file}");
         }
-        if (php_sapi_name() !== 'cli') {
+        if (trim(shell_exec('whoami')) === 'root') {
             echo "($diff) $message\n";
         } else {
             // When running from CLI, potentially log to systemd journal
