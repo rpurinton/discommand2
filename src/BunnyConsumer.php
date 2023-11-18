@@ -6,7 +6,6 @@ use React\EventLoop\LoopInterface;
 use Bunny\Async\Client;
 use Bunny\Channel;
 use Bunny\Exception\ClientException;
-use Bunny\Exception\ConnectException;
 use RPurinton\Discommand2\Exceptions\MessageQueueException;
 use RPurinton\Discommand2\Exceptions\NetworkException;
 
@@ -30,7 +29,7 @@ class BunnyConsumer extends ConfigLoader
 				return $client->channel();
 			},
 			function (\Throwable $e) {
-				if ($e instanceof ClientException || $e instanceof ConnectException) {
+				if ($e instanceof ClientException) {
 					throw new NetworkException('Failed to connect to the server', 0, $e);
 				}
 			}
