@@ -11,7 +11,6 @@ class Brain extends ConfigLoader
         echo ("Brain Construct\n");
         parent::__construct();
         $this->bunny = new BunnyConsumer;
-        $this->bunny->publish($this->myName, ["name" => $this->myName, "type" => "register"]);
     }
 
     public function run()
