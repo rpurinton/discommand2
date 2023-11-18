@@ -64,7 +64,7 @@ class BunnyConsumer extends ConfigLoader
 		$this->queue = $queue;
 		$this->callback = $callback;
 		$this->channel->queueDeclare($queue);
-		$this->channel->consume($this->process(...), $this->queue, $this->consumerTag);
+		Async\Await($this->channel->consume($this->process(...), $this->queue, $this->consumerTag));
 	}
 
 	private function process(Message $message, Channel $channel, Client $client)
@@ -77,8 +77,8 @@ class BunnyConsumer extends ConfigLoader
 	public function publish($queue, $data)
 	{
 		echo ("Consumer Publish\n");
-		$json_string = json_encode($data);
+		if (!$this->channel) return print_r("Channel Not Ready Yet\n");
 		$this->channel->queueDeclare($queue);
-		$this->channel->publish($json_string, [], '', $queue);
+		$this->channel->publish(json_encode($data), [], '', $queue);
 	}
 }
