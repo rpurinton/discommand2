@@ -8,7 +8,7 @@ class BunnyConsumer extends ConfigLoader
 	private $channel;
 	private $callback;
 
-	public function __construct(private $queue)
+	public function __construct()
 	{
 		parent::__construct();
 		$this->client = new \Bunny\Client($this->config["bunny"]);
@@ -22,10 +22,10 @@ class BunnyConsumer extends ConfigLoader
 		$this->client->disconnect();
 	}
 
-	public function run(callable $callback): void
+	public function run(string $queue, callable $callback): void
 	{
 		$this->callback = $callback;
-		$this->channel->consume($this->process(...), $this->queue);
+		$this->channel->consume($this->process(...), $queue);
 	}
 
 	private function process($message, $channel, $client)

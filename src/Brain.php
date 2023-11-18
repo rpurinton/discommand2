@@ -4,7 +4,7 @@ namespace RPurinton\Discommand2;
 
 class Brain extends ConfigLoader
 {
-    private $bunny = null;
+    private $bunny = new BunnyConsumer;
 
     public function __construct(private $myName)
     {
@@ -15,7 +15,7 @@ class Brain extends ConfigLoader
 
     public function run()
     {
-        $this->bunny->run($this->inbox(...));
+        $this->bunny->run($this->myName, $this->inbox(...));
     }
 
     private function inbox($message): bool
