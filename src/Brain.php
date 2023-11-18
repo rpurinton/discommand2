@@ -2,21 +2,20 @@
 
 namespace RPurinton\Discommand2;
 
+use React\EventLoop\Loop;
+use React\EventLoop\LoopInterface;
+
 class Brain extends ConfigLoader
 {
+    private LoopInterface $loop;
     private $bunny;
 
     public function __construct(private $myName)
     {
         echo ("Brain Construct\n");
         parent::__construct();
-        $this->bunny = new BunnyConsumer;
-    }
-
-    public function run()
-    {
-        echo ("Brain Run\n");
-        $this->bunny->run($this->myName, $this->inbox(...));
+        $this->loop = Loop::get();
+        $this->bunny = new BunnyConsumer($this->loop, $myName, $this->inbox(...));
     }
 
     private function inbox($message): bool
