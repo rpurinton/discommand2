@@ -1,30 +1,31 @@
 # Discommand2
 
-Discommand2 is a PHP-based system designed to handle message queues and logging.
+Discommand2 is an advanced message processing system designed to handle asynchronous tasks with high efficiency and reliability. It leverages RabbitMQ for message queuing, MariaDB for data persistence, and PHP for the core application logic.
 
-## Error Handling
+## Features
 
-The system includes robust error handling with custom exception classes for different error scenarios. These exceptions are logged and managed to ensure reliability and maintainability.
+- Asynchronous message processing with RabbitMQ.
+- Robust logging system for easy debugging and monitoring.
+- Custom exception handling for granular error management.
+- Scalable architecture to handle increasing loads.
+- Comprehensive test suite for reliability.
 
-### Custom Exceptions
+## Components
 
-- `ConfigurationException`: Handles configuration-related errors.
-- `NetworkException`: Handles network-related errors.
-- `MessageQueueException`: Handles message queue-related errors.
-- `LogException`: Handles logging-related errors.
+- `Brain`: The central processing unit of the system, handling all message-related operations.
+- `BunnyConsumer`: A RabbitMQ consumer for processing queued messages.
+- `Logger`: A logging utility to record system events and errors.
+- `ConfigLoader`: A configuration manager to handle system settings.
+- `GlobalExceptionHandler`: An exception handler to manage unexpected errors.
 
-### Global Exception Handler
+## Getting Started
 
-A global exception handler is registered to catch unhandled exceptions, log them, and signal an error status to systemd.
+Refer to the [docs.d](https://github.com/rpurinton/discommand2/tree/master/docs.d) directory for detailed documentation on setting up, configuring, and using Discommand2. The documentation includes a setup guide, usage instructions, technical references, testing information, troubleshooting tips, and contribution guidelines.
 
-## Testing
+## Contributing
 
-PHPUnit tests are provided in the `tests.d` directory to ensure that error handling works as expected.
+Contributions are welcome! Please refer to the `docs.d/Contributing.md` for contribution guidelines.
 
-## Systemd Integration
+## License
 
-The application is designed to be managed by systemd, which will handle service start, stop, and restart, as well as capture the output of the logging to the systemd journal.
-
-## Packaging
-
-The application can be packaged as a PHAR for easy deployment across different environments.
+Discommand2 is open-source software licensed under the MIT license. See the full license file at [LICENSE](https://github.com/rpurinton/discommand2/blob/master/LICENSE).
