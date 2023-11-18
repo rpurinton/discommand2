@@ -29,7 +29,7 @@ class Brain extends ConfigLoader
     private function inbox(array $message): bool
     {
         try {
-            $this->logger->log("Received message " . print_r($message, true));
+            $this->logger->log("Received message " . trim(substr(print_r($message, true), 6)));
             // Do something with the message
         } catch (LogException $e) {
             // Handle logging exception
