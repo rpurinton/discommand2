@@ -5,13 +5,19 @@ namespace RPurinton\Discommand2;
 class Logger
 {
     private float $last_microttime = 0;
+    private string $log_dir;
 
-    public function __construct(private string $log_dir = __DIR__ . '/../logs.d')
+    public function __construct(string $log_dir = __DIR__ . '/../logs.d')
     {
         $this->last_microttime = microtime(true);
-        if (substr($this->log_dir, 0, 1) !== '/') $this->log_dir = __DIR__ . "/../" . $this->log_dir;
+        $this->log_dir = realpath($log_dir) ?: $log_dir;
         if (!is_dir($this->log_dir)) mkdir($this->log_dir);
         $this->log("Logger initialized");
+    }
+
+    public function getLogDir(): string
+    {
+        return $this->log_dir;
     }
 
     public function log($message, $level = 'INFO')
@@ -28,7 +34,19 @@ class Logger
             echo "($diff) $message\n";
         } else {
             // When running from CLI, potentially log to systemd journal
-            exec("echo '$log_message' | systemd-cat -t discommand2 -p $level");
+            $level = strtoupper($level);
+            $syslogPriority = match($level) {
+                'EMERGENCY' => 'emerg',
+                'ALERT'     => 'alert',
+                'CRITICAL'  => 'crit',
+                'ERROR'     => 'err',
+                'WARNING'   => 'warning',
+                'NOTICE'    => 'notice',
+                'INFO'      => 'info',
+                'DEBUG'     => 'debug',
+                default     => 'info',
+            };
+            exec("echo '$log_message' | systemd-cat -t discommand2 -p $syslogPriority");
         }
     }
 }
