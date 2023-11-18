@@ -14,7 +14,7 @@ class BunnyConsumer extends ConfigLoader
 	private Channel $channel;
 	private string $consumerTag;
 
-	public function __construct(LoopInterface $loop, private string $queue, private callable $callback)
+	public function __construct(LoopInterface $loop, private string $queue, private $callback)
 	{
 		echo ("Consumer Construct\n");
 		parent::__construct();
