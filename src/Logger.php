@@ -20,6 +20,7 @@ class Logger
         $diff = $microtime - $this->last_microttime;
         $this->last_microttime = $microtime;
         $diff = number_format($diff, 6, '.', '') . 's';
+        if (strlen($diff) < 8) $diff = str_repeat('0', 8 - strlen($diff)) . $diff;
         $log_file = $this->log_dir . '/' . date('Y-m-d') . '.log';
         $log_message = "[" . date('Y-m-d H:i:s') . '.' . substr(number_format(microtime(true), 6, '.', ''), -6) . "] ($diff) $message\n";
         file_put_contents($log_file, $log_message, FILE_APPEND);
