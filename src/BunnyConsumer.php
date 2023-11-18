@@ -16,7 +16,7 @@ class BunnyConsumer extends ConfigLoader
 
 	public function __construct(LoopInterface $loop, private string $queue, private $callback)
 	{
-		echo ("Consumer Construct\n");
+		echo ("BunnyConsumer Construct\n");
 		parent::__construct();
 		$this->consumerTag = bin2hex(random_bytes(8));
 		$this->client = new Client($loop, $this->config["bunny"]);
@@ -25,7 +25,7 @@ class BunnyConsumer extends ConfigLoader
 
 	public function __destruct()
 	{
-		echo ("Consumer Destruct\n");
+		echo ("BunnyConsumer Destruct\n");
 		if ($this->channel) {
 			$this->channel->cancel($this->consumerTag);
 			$this->channel->queueDelete($this->queue);
@@ -37,13 +37,13 @@ class BunnyConsumer extends ConfigLoader
 
 	private function getChannel(Client $client)
 	{
-		echo ("Consumer Get Channel\n");
+		echo ("BunnyConsumer Get Channel\n");
 		return $client->channel();
 	}
 
 	private function consume(Channel $channel)
 	{
-		echo ("Consumer Consume\n");
+		echo ("BunnyConsumer Consume\n");
 		$this->channel = $channel;
 		$channel->qos(0, 1);
 		$this->channel->queueDeclare($this->queue);
@@ -52,14 +52,14 @@ class BunnyConsumer extends ConfigLoader
 
 	private function process(Message $message, Channel $channel, Client $client)
 	{
-		echo ("Consumer Process\n");
+		echo ("BunnyConsumer Process\n");
 		if (($this->callback)(json_decode($message->content, true))) return $channel->ack($message);
 		$channel->nack($message);
 	}
 
 	public function publish(string $queue, array $data): bool
 	{
-		echo ("Consumer Publish\n");
+		echo ("BunnyConsumer Publish\n");
 		if (!$this->channel) return false;
 		$this->channel->queueDeclare($queue);
 		return Async\await($this->channel->publish(json_encode($data), [], '', $queue));
