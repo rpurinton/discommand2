@@ -9,8 +9,9 @@ class Logger
     public function __construct(private string $log_dir = __DIR__ . '/../logs.d')
     {
         $this->last_microttime = microtime(true);
+        if (substr($this->log_dir, 0, 1) !== '/') $this->log_dir = __DIR__ . "/../" . $this->log_dir;
         if (!is_dir($this->log_dir)) mkdir($this->log_dir);
-        $this->log("Logger initialized.");
+        $this->log("Logger initialized");
     }
 
     public function log($message)
