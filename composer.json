@@ -5,7 +5,7 @@
         "openai-php/client": "^0.6.4",
         "symfony/http-client": "^6.2",
         "mehrab-wj/tiktoken-php": "^1.0",
-        "react/async": "^4",
+        "react/async": "^4.1",
         "michaelesmith/email-parser": "dev-master"
     },
     "autoload": {
