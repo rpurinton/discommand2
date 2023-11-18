@@ -2,9 +2,11 @@
 
 namespace RPurinton\Discommand2;
 
+use React\Async;
 use React\EventLoop\LoopInterface;
 use Bunny\Async\Client;
 use Bunny\Channel;
+use Bunny\Message;
 use Bunny\Exception\ClientException;
 use RPurinton\Discommand2\Exceptions\MessageQueueException;
 use RPurinton\Discommand2\Exceptions\NetworkException;
@@ -38,19 +40,26 @@ class BunnyConsumer extends ConfigLoader
 				$this->channel = $channel;
 				$channel->qos(0, 1);
 				$channel->queueDeclare($this->queue);
-				return $channel->consume($this->callback, $this->queue, '', false, true);
+				return $channel->consume($this->process(...), $this->queue, '', false, true);
 			}
 		);
 	}
 
-	public function connect()
+	private function process(Message $message, Channel $channel, Client $client)
 	{
-		throw new NetworkException('Simulated network failure during connect');
+		if (($this->callback)(json_decode($message->content, true))) {
+			return $channel->ack($message);
+		}
+		$channel->nack($message);
 	}
 
-	public function publishToInvalidQueue(array $message)
+	public function publish(string $queue, array $data): bool
 	{
-		throw new MessageQueueException('Simulated failure publishing to invalid queue');
+		if (!$this->channel) {
+			throw new MessageQueueException('Attempted to publish to a queue without an active channel');
+		}
+		$this->channel->queueDeclare($queue);
+		return Async\await($this->channel->publish(json_encode($data), [], '', $queue));
 	}
 
 	public function __destruct()
@@ -60,6 +69,8 @@ class BunnyConsumer extends ConfigLoader
 			$this->channel->queueDelete($this->queue);
 			$this->channel->close();
 		}
-		if (isset($this->client)) $this->client->disconnect();
+		if (isset($this->client)) {
+			$this->client->disconnect();
+		}
 	}
 }
