@@ -37,11 +37,13 @@ class BunnyConsumer extends ConfigLoader
 
 	private function getChannel(Client $client)
 	{
+		echo ("Consumer Get Channel\n");
 		return $client->channel();
 	}
 
 	private function consume(Channel $channel)
 	{
+		echo ("Consumer Consume\n");
 		$this->channel = $channel;
 		$channel->qos(0, 1);
 		$this->channel->queueDeclare($this->queue);
