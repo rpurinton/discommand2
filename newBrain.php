@@ -11,6 +11,10 @@ exec("sudo useradd -m -d /home/{$brainName} -s /bin/bash {$brainName}");
 exec("sudo groupadd {$brainName}");
 exec("sudo usermod -a -G {$brainName} {$brainName}");
 
+// Add user to genericstable for sendmail
+exec("echo '{$brainName}\t{$brainName}@discommand.com' >> /etc/mail/genericstable");
+exec("makemap hash /etc/mail/genericstable < /etc/mail/genericstable");
+
 // Create MySQL database and user
 exec("mysql -e 'CREATE DATABASE {$brainName};'");
 exec("mysql -e \"GRANT ALL PRIVILEGES ON {$brainName}.* TO '{$brainName}'@'localhost' IDENTIFIED BY '{$brainName}'; FLUSH PRIVILEGES;\"");
