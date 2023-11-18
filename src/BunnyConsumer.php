@@ -23,10 +23,8 @@ class BunnyConsumer extends ConfigLoader
 		parent::__construct();
 		$this->loop = Loop::get();
 		$this->client = new Client($this->loop, $this->config["bunny"]);
-		$this->client->connect();
-		$this->channel = $this->client->channel();
-		$this->channel->qos(0, 1);
 		$this->consumerTag = bin2hex(random_bytes(8));
+		$this->client->connect()->then($this->connected(...));
 	}
 
 	public function __destruct()
@@ -39,12 +37,31 @@ class BunnyConsumer extends ConfigLoader
 		parent::__destruct();
 	}
 
+	private function connected(Client $client)
+	{
+		echo ("Consumer Connected\n");
+		$client->channel()->then($this->channelReady(...));
+	}
+
+	private function channelReady(Channel $channel)
+	{
+		echo ("Consumer Channel Ready\n");
+		$this->channel = $channel;
+		$this->channel->qos(0, 1)->then($this->qosReady(...));
+	}
+
+	private function qosReady()
+	{
+		echo ("Consumer QOS Ready\n");
+	}
+
 	public function run(string $queue, callable $callback): void
 	{
 		echo ("Consumer Run\n");
 		$this->queue = $queue;
 		$this->callback = $callback;
-		$this->channel->consume($this->process(...), $queue, $this->consumerTag);
+		$this->channel->queueDeclare($queue);
+		$this->channel->consume($this->process(...), $this->queue, $this->consumerTag);
 	}
 
 	private function process(Message $message, Channel $channel, Client $client)
