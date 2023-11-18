@@ -12,7 +12,7 @@ class BunnyConsumer extends ConfigLoader
 
 	public function __construct()
 	{
-		echo("Consumer Construct\n");
+		echo ("Consumer Construct\n");
 		parent::__construct();
 		$this->client = new \Bunny\Client($this->config["bunny"]);
 		$this->client->connect();
@@ -23,7 +23,7 @@ class BunnyConsumer extends ConfigLoader
 
 	public function __destruct()
 	{
-		echo("Consumer Destruct\n");
+		echo ("Consumer Destruct\n");
 		$this->channel->cancel($this->consumerTag);
 		$this->channel->queueDelete($this->queue);
 		$this->channel->close();
@@ -33,7 +33,7 @@ class BunnyConsumer extends ConfigLoader
 
 	public function run(string $queue, callable $callback): void
 	{
-		echo("Consumer Run\n");
+		echo ("Consumer Run\n");
 		$this->queue = $queue;
 		$this->callback = $callback;
 		$this->channel->consume($this->process(...), $queue, $this->consumerTag);
@@ -41,14 +41,14 @@ class BunnyConsumer extends ConfigLoader
 
 	private function process($message, $channel, $client)
 	{
-		echo("Consumer Process\n");
+		echo ("Consumer Process\n");
 		if (($this->callback)(json_decode($message->content, true))) return $channel->ack($message);
 		$channel->nack($message);
 	}
 
 	public function publish($queue, $data)
 	{
-		echo("Consumer Publish\n");
+		echo ("Consumer Publish\n");
 		$json_string = json_encode($data);
 		$this->channel->queueDeclare($queue);
 		$this->channel->publish($json_string, [], '', $queue);
