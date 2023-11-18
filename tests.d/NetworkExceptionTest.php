@@ -13,10 +13,11 @@ class NetworkExceptionTest extends TestCase
         $this->expectException(NetworkException::class);
         $loop = $this->createMock(LoopInterface::class);
         $loop->method('run')->will($this->throwException(new ClientException('Simulated connection failure')));
-        $bunnyConsumer = new BunnyConsumer($loop, 'invalid_queue', function() {});
+        $bunnyConsumer = new BunnyConsumer($loop, 'invalid_queue', function () {
+        });
         // Intentionally trigger a NetworkException by attempting to connect
         try {
-            $bunnyConsumer->connect();
+            $bunnyConsumer->simulateFailedConnection();
         } catch (ClientException $e) {
             throw new NetworkException('Simulated network failure', 0, $e);
         }

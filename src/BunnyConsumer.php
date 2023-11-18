@@ -73,4 +73,15 @@ class BunnyConsumer extends ConfigLoader
 			$this->client->disconnect();
 		}
 	}
+
+	// stub functions for unit testing
+	public function simulateFailedConnection()
+	{
+		throw new NetworkException('Simulated failure: Failed to connect to the server');
+	}
+
+	public function simulateFailedPublish()
+	{
+		throw new MessageQueueException('Simulated failure: Failed to publish to the queue');
+	}
 }

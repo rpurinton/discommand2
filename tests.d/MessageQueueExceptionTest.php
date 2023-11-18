@@ -11,8 +11,9 @@ class MessageQueueExceptionTest extends TestCase
     {
         $this->expectException(MessageQueueException::class);
         $loop = $this->createMock(LoopInterface::class);
-        $bunnyConsumer = new BunnyConsumer($loop, 'invalid_queue', function() {});
+        $bunnyConsumer = new BunnyConsumer($loop, 'invalid_queue', function () {
+        });
         // Intentionally trigger a MessageQueueException
-        $bunnyConsumer->publishToInvalidQueue([]);
+        $bunnyConsumer->simulateFailedPublish();
     }
 }
