@@ -1,4 +1,4 @@
-# Discommand2 Project
+# Discommand2
 
 Discommand2 is an advanced message processing system designed to handle asynchronous tasks with high efficiency and reliability. It leverages RabbitMQ for message queuing, MariaDB for data persistence, and PHP for the core application logic.
 
@@ -20,7 +20,7 @@ Discommand2 is an advanced message processing system designed to handle asynchro
 
 ## Getting Started
 
-Refer to the `docs.d` directory for detailed documentation on setting up, configuring, and using Discommand2. The documentation includes a setup guide, usage instructions, technical references, testing information, troubleshooting tips, and contribution guidelines.
+Refer to the [docs.d](https://github.com/rpurinton/discommand2/tree/master/docs.d) directory for detailed documentation on setting up, configuring, and using Discommand2. The documentation includes a setup guide, usage instructions, technical references, testing information, troubleshooting tips, and contribution guidelines.
 
 ## Contributing
 
@@ -28,4 +28,4 @@ Contributions are welcome! Please refer to the `docs.d/Contributing.md` for cont
 
 ## License
 
-Discommand2 is open-source software licensed under the MIT license.
+Discommand2 is open-source software licensed under the MIT license. See the full license file at [LICENSE](https://github.com/rpurinton/discommand2/blob/master/LICENSE).
