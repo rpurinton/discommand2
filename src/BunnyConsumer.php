@@ -2,8 +2,15 @@
 
 namespace RPurinton\Discommand2;
 
+use RPurinton\Discommand2\ConfigLoader;
+use Bunny\Async\Client;
+use Bunny\Channel;
+use Bunny\Message;
+use React\EventLoop\Loop;
+
 class BunnyConsumer extends ConfigLoader
 {
+	private $loop;
 	private $queue;
 	private $client;
 	private $channel;
@@ -14,7 +21,8 @@ class BunnyConsumer extends ConfigLoader
 	{
 		echo ("Consumer Construct\n");
 		parent::__construct();
-		$this->client = new \Bunny\Client($this->config["bunny"]);
+		$this->loop = Loop::get();
+		$this->client = new Client($this->loop, $this->config["bunny"]);
 		$this->client->connect();
 		$this->channel = $this->client->channel();
 		$this->channel->qos(0, 1);
@@ -39,7 +47,7 @@ class BunnyConsumer extends ConfigLoader
 		$this->channel->consume($this->process(...), $queue, $this->consumerTag);
 	}
 
-	private function process($message, $channel, $client)
+	private function process(Message $message, Channel $channel, Client $client)
 	{
 		echo ("Consumer Process\n");
 		if (($this->callback)(json_decode($message->content, true))) return $channel->ack($message);
