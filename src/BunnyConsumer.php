@@ -7,6 +7,7 @@ use React\EventLoop\LoopInterface;
 use Bunny\Async\Client;
 use Bunny\Channel;
 use Bunny\Message;
+use RPurinton\Discommand2\Exceptions\MessageQueueException;
 
 class BunnyConsumer extends ConfigLoader
 {
@@ -17,9 +18,13 @@ class BunnyConsumer extends ConfigLoader
 	public function __construct(LoopInterface $loop, private string $queue, private $callback)
 	{
 		parent::__construct();
-		$this->consumerTag = bin2hex(random_bytes(8));
-		$this->client = new Client($loop, $this->config["bunny"]);
-		$this->client->connect()->then($this->getChannel(...))->then($this->consume(...));
+		try {
+			$this->consumerTag = bin2hex(random_bytes(8));
+			$this->client = new Client($loop, $this->config["bunny"]);
+			$this->client->connect()->then($this->getChannel(...))->then($this->consume(...));
+		} catch (\Throwable $e) {
+			throw new MessageQueueException('Failed to initialize BunnyConsumer', 0, $e);
+		}
 	}
 
 	public function __destruct()
@@ -47,14 +52,24 @@ class BunnyConsumer extends ConfigLoader
 
 	private function process(Message $message, Channel $channel, Client $client)
 	{
-		if (($this->callback)(json_decode($message->content, true))) return $channel->ack($message);
-		$channel->nack($message);
+		try {
+			if (($this->callback)(json_decode($message->content, true))) {
+				return $channel->ack($message);
+			}
+			$channel->nack($message);
+		} catch (\Throwable $e) {
+			throw new MessageQueueException('Failed to process message', 0, $e);
+		}
 	}
 
 	public function publish(string $queue, array $data): bool
 	{
-		if (!$this->channel) return false;
-		$this->channel->queueDeclare($queue);
-		return Async\await($this->channel->publish(json_encode($data), [], '', $queue));
+		try {
+			if (!$this->channel) throw new MessageQueueException('Channel not initialized');
+			$this->channel->queueDeclare($queue);
+			return Async\await($this->channel->publish(json_encode($data), [], '', $queue));
+		} catch (\Throwable $e) {
+			throw new MessageQueueException('Failed to publish message', 0, $e);
+		}
 	}
 }

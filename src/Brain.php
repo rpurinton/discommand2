@@ -4,6 +4,8 @@ namespace RPurinton\Discommand2;
 
 use React\EventLoop\Loop;
 use React\EventLoop\LoopInterface;
+use RPurinton\Discommand2\Exceptions\ConfigurationException;
+use RPurinton\Discommand2\Exceptions\LogException;
 
 class Brain extends ConfigLoader
 {
@@ -13,15 +15,25 @@ class Brain extends ConfigLoader
 
     public function __construct(private $myName)
     {
-        parent::__construct();
-        $this->logger = new Logger($this->config["logger"]["log_dir"] ?? __DIR__ . '/../logs.d');
-        $this->loop = Loop::get();
-        $this->bunny = new BunnyConsumer($this->loop, $myName, $this->inbox(...));
+        try {
+            parent::__construct();
+            $this->logger = new Logger($this->config["logger"]["log_dir"] ?? __DIR__ . '/../logs.d');
+            $this->loop = Loop::get();
+            $this->bunny = new BunnyConsumer($this->loop, $myName, $this->inbox(...));
+        } catch (ConfigurationException | LogException $e) {
+            // Handle exception (log or rethrow)
+            throw $e;
+        }
     }
 
     private function inbox($message): bool
     {
-        $this->logger->log("Received message: " . json_encode($message, JSON_PRETTY_PRINT));
-        return true;
+        try {
+            $this->logger->log("Received message: " . json_encode($message, JSON_PRETTY_PRINT));
+            return true;
+        } catch (LogException $e) {
+            // Handle logging exception
+            throw $e;
+        }
     }
 }
