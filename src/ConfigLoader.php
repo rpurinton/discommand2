@@ -8,18 +8,18 @@ class ConfigLoader
 
     public function __construct()
     {
-        echo ("ConfigLoader Construct\n");
+        Logger::log("ConfigLoader Construct");
         $this->loadConfig();
     }
 
     public function __destruct()
     {
-        echo ("ConfigLoader Destruct\n");
+        Logger::log("ConfigLoader Destruct");
     }
 
     private function loadConfig()
     {
-        echo ("ConfigLoader Load Config\n");
+        Logger::log("ConfigLoader Load Config");
         $configFiles = glob(__DIR__ . "/../conf.d/*.json");
         foreach ($configFiles as $configFile) {
             $section = basename($configFile, '.json');

@@ -12,7 +12,7 @@ class Brain extends ConfigLoader
 
     public function __construct(private $myName)
     {
-        echo ("Brain Construct\n");
+        Logger::log("Brain Construct");
         parent::__construct();
         $this->loop = Loop::get();
         $this->bunny = new BunnyConsumer($this->loop, $myName, $this->inbox(...));
@@ -20,8 +20,8 @@ class Brain extends ConfigLoader
 
     private function inbox($message): bool
     {
-        echo ("Brain Inbox");
-        print_r($message);
+        Logger::log("Brain Inbox");
+        Logger::log(print_r($message, true));
         return true;
     }
 }
