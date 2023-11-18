@@ -11,7 +11,7 @@ class GlobalExceptionHandler
         $logger->log($exception->getMessage(), 'ERROR');
 
         // Signal error status for systemd
-        if (php_sapi_name() === 'cli') {
+        if (trim(shell_exec('whoami') ?? "") === 'root') {
             // Use the exit code 1 to signal a general error
             exit(1);
         }
