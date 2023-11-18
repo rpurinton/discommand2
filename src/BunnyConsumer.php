@@ -7,6 +7,7 @@ use Bunny\Async\Client;
 use Bunny\Channel;
 use Bunny\Message;
 use React\EventLoop\Loop;
+use React\Async;
 
 class BunnyConsumer extends ConfigLoader
 {
@@ -24,16 +25,18 @@ class BunnyConsumer extends ConfigLoader
 		$this->loop = Loop::get();
 		$this->client = new Client($this->loop, $this->config["bunny"]);
 		$this->consumerTag = bin2hex(random_bytes(8));
-		$this->client->connect()->then($this->connected(...));
+		Async\Await($this->client->connect()->then($this->connected(...)));
 	}
 
 	public function __destruct()
 	{
 		echo ("Consumer Destruct\n");
-		$this->channel->cancel($this->consumerTag);
-		$this->channel->queueDelete($this->queue);
-		$this->channel->close();
-		$this->client->disconnect();
+		if ($this->channel) {
+			$this->channel->cancel($this->consumerTag);
+			$this->channel->queueDelete($this->queue);
+			$this->channel->close();
+		}
+		if ($this->client) $this->client->disconnect();
 		parent::__destruct();
 	}
 
