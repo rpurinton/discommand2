@@ -26,7 +26,7 @@ class Brain extends ConfigLoader
         }
     }
 
-    private function inbox(string $message): bool
+    private function inbox(array $headers, string $message): bool
     {
         try {
             $this->logger->log("Received message: $message");
