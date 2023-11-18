@@ -26,10 +26,10 @@ class Brain extends ConfigLoader
         }
     }
 
-    private function inbox($message): bool
+    private function inbox(string $message): bool
     {
         try {
-            $this->logger->log("Received message: " . json_encode($message, JSON_PRETTY_PRINT));
+            $this->logger->log("Received message: $message");
             return true;
         } catch (LogException $e) {
             // Handle logging exception
