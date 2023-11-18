@@ -19,6 +19,7 @@ class BunnyPublisher extends ConfigLoader
 
     public function publish($queue, $json_string)
     {
+        $this->channel->queueDeclare($queue);
         $this->channel->publish($json_string, [], '', $queue);
         $this->channel->close();
         $this->bunny->disconnect();
