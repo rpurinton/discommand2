@@ -1,0 +1,7 @@
+{
+   "host": "your_rabbit_host",
+   "vhost": "your_vhost_name",
+   "user": "your_username",
+   "password": "your_password",
+   "heartbeat": 1000
+}
