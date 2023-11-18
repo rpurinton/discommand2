@@ -40,8 +40,8 @@ class Logger
         if ($this->log_dir === '/root/invalid/log/dir' || file_put_contents($log_file, $log_message, FILE_APPEND) === false) {
             throw new LogException("Failed to write to log file: {$log_file}");
         }
-        if (trim(shell_exec('whoami')) === 'root') {
-            echo "($diff) $message\n";
+        if (trim(shell_exec('whoami') ?? "") === 'root') {
+            echo $log_message;
         } else {
             // When running from CLI, potentially log to systemd journal
             $level = strtoupper($level);
