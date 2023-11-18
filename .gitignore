@@ -1,4 +1,7 @@
-src/composer.lock
-src/vendor
-src/logs.d
-
+vendor/
+conf.d/
+*.lock
+*.swp
+*~
+.DS_Store
+/test*.php

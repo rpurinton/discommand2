@@ -2,8 +2,6 @@
 
 namespace RPurinton\Discommand2;
 
-require_once(__DIR__ . "/BunnyConsumer.php");
-
 class Brain extends ConfigLoader
 {
     private $bunny = null;
@@ -26,9 +24,3 @@ class Brain extends ConfigLoader
         return true;
     }
 }
-
-if (!isset($argv[1])) die("Usage: php src/Brain.php <name>\n");
-$myName = $argv[1];
-
-$brain = new Brain($myName);
-$brain->run();

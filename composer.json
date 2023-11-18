@@ -1,0 +1,21 @@
+{
+    "require": {
+        "team-reflex/discord-php": "^7.2",
+        "bunny/bunny": "@dev",
+        "openai-php/client": "^0.6.4",
+        "symfony/http-client": "^6.2",
+        "mehrab-wj/tiktoken-php": "^1.0",
+        "react/async": "^4",
+        "michaelesmith/email-parser": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "RPurinton\\Discommand2\\": "src/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    }
+}

@@ -1,7 +1,0 @@
-{
-   "host": "127.0.0.1",
-   "vhost": "discommand2",
-   "user": "discommand",
-   "password": "discommand",
-   "heartbeat": 1000
-}
