@@ -14,7 +14,7 @@ class Brain extends ConfigLoader
     public function __construct(private $myName)
     {
         parent::__construct();
-        $this->logger = new Logger($this->config["logger"]["log_dir"]);
+        $this->logger = new Logger($this->config["logger"]["log_dir"] ?? __DIR__ . '/../logs.d');
         $this->loop = Loop::get();
         $this->bunny = new BunnyConsumer($this->loop, $myName, $this->inbox(...));
     }

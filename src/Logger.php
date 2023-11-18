@@ -9,9 +9,7 @@ class Logger
     public function __construct(private string $log_dir = __DIR__ . '/../logs.d')
     {
         $this->last_microttime = microtime(true);
-
         if (!is_dir($this->log_dir)) mkdir($this->log_dir);
-
         $this->log("Logger initialized.");
     }
 
@@ -23,7 +21,6 @@ class Logger
         $diff = number_format($diff, 6, '.', '') . 's';
         $log_file = $this->log_dir . '/' . date('Y-m-d') . '.log';
         $log_message = "[" . date('Y-m-d H:i:s') . '.' . substr(number_format(microtime(true), 6, '.', ''), -6) . "] ($diff) $message\n";
-
         file_put_contents($log_file, $log_message, FILE_APPEND);
         echo "($diff) $message\n";
     }
