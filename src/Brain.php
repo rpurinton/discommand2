@@ -26,14 +26,20 @@ class Brain extends ConfigLoader
         }
     }
 
-    private function inbox(array $headers, string $message): bool
+    private function inbox(array $message): bool
     {
         try {
-            $this->logger->log("Received message: $message");
-            return true;
+            $this->logger->log("Received message " . print_r($message, true));
+            // Do something with the message
         } catch (LogException $e) {
             // Handle logging exception
             throw $e;
+        } catch (\Throwable $e) {
+            // Handle other exceptions
+            throw $e;
+        } finally {
+            // Always acknowledge the message
+            return true;
         }
     }
 }
