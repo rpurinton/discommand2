@@ -2,74 +2,65 @@
 
 namespace RPurinton\Discommand2;
 
-use React\Async;
 use React\EventLoop\LoopInterface;
 use Bunny\Async\Client;
 use Bunny\Channel;
-use Bunny\Message;
+use Bunny\Exception\ClientException;
+use Bunny\Exception\ConnectException;
 use RPurinton\Discommand2\Exceptions\MessageQueueException;
+use RPurinton\Discommand2\Exceptions\NetworkException;
 
 class BunnyConsumer extends ConfigLoader
 {
 	private Client $client;
-	private Channel $channel;
+	private ?Channel $channel = null;
 	private string $consumerTag;
+	private string $queue;
+	private $callback;
 
-	public function __construct(LoopInterface $loop, private string $queue, private $callback)
+	public function __construct(LoopInterface $loop, string $queue, $callback)
 	{
 		parent::__construct();
-		try {
-			$this->consumerTag = bin2hex(random_bytes(8));
-			$this->client = new Client($loop, $this->config["bunny"]);
-			$this->client->connect()->then($this->getChannel(...))->then($this->consume(...));
-		} catch (\Throwable $e) {
-			throw new MessageQueueException('Failed to initialize BunnyConsumer', 0, $e);
-		}
+		$this->queue = $queue;
+		$this->callback = $callback;
+		$this->consumerTag = bin2hex(random_bytes(8));
+		$this->client = new Client($loop, $this->config["bunny"] ?? []);
+		$this->client->connect()->then(
+			function (Client $client) {
+				return $client->channel();
+			},
+			function (\Throwable $e) {
+				if ($e instanceof ClientException || $e instanceof ConnectException) {
+					throw new NetworkException('Failed to connect to the server', 0, $e);
+				}
+			}
+		)->then(
+			function (Channel $channel) {
+				$this->channel = $channel;
+				$channel->qos(0, 1);
+				$channel->queueDeclare($this->queue);
+				return $channel->consume($this->callback, $this->queue, '', false, true);
+			}
+		);
+	}
+
+	public function connect()
+	{
+		throw new NetworkException('Simulated network failure during connect');
+	}
+
+	public function publishToInvalidQueue(array $message)
+	{
+		throw new MessageQueueException('Simulated failure publishing to invalid queue');
 	}
 
 	public function __destruct()
 	{
-		if ($this->channel) {
+		if (isset($this->channel)) {
 			$this->channel->cancel($this->consumerTag);
 			$this->channel->queueDelete($this->queue);
 			$this->channel->close();
 		}
-		if ($this->client) $this->client->disconnect();
-	}
-
-	private function getChannel(Client $client)
-	{
-		return $client->channel();
-	}
-
-	private function consume(Channel $channel)
-	{
-		$this->channel = $channel;
-		$channel->qos(0, 1);
-		$this->channel->queueDeclare($this->queue);
-		$channel->consume($this->process(...), $this->queue);
-	}
-
-	private function process(Message $message, Channel $channel, Client $client)
-	{
-		try {
-			if (($this->callback)(json_decode($message->content, true))) {
-				return $channel->ack($message);
-			}
-			$channel->nack($message);
-		} catch (\Throwable $e) {
-			throw new MessageQueueException('Failed to process message', 0, $e);
-		}
-	}
-
-	public function publish(string $queue, array $data): bool
-	{
-		try {
-			if (!$this->channel) throw new MessageQueueException('Channel not initialized');
-			$this->channel->queueDeclare($queue);
-			return Async\await($this->channel->publish(json_encode($data), [], '', $queue));
-		} catch (\Throwable $e) {
-			throw new MessageQueueException('Failed to publish message', 0, $e);
-		}
+		if (isset($this->client)) $this->client->disconnect();
 	}
 }

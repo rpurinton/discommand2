@@ -1,0 +1,1 @@
+{"version":1,"defects":[],"times":{"ErrorHandlingTest::testConfigurationException":0.001,"LogExceptionTest::testLogException":0,"LoggerTest::testLogCreation":0.003,"LoggerTest::testLogMessage":0.006,"MessageQueueExceptionTest::testMessageQueueException":0.005,"NetworkExceptionTest::testNetworkException":0.001}}
