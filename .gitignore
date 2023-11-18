@@ -1,5 +1,6 @@
 vendor/
 conf.d/
+logs.d/
 *.lock
 *.swp
 *~
