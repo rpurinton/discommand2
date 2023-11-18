@@ -4,12 +4,12 @@ namespace RPurinton\Discommand2;
 
 class Brain extends ConfigLoader
 {
-    private $bunny = new BunnyConsumer;
+    private $bunny;
 
     public function __construct(private $myName)
     {
         parent::__construct();
-        $this->bunny = new BunnyConsumer($this->myName);
+        $this->bunny = new BunnyConsumer;
         $this->bunny->publish($this->myName, ["name" => $this->myName, "type" => "register"]);
     }
 
