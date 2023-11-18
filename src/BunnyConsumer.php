@@ -2,30 +2,25 @@
 
 namespace RPurinton\Discommand2;
 
-use RPurinton\Discommand2\ConfigLoader;
+use React\Async;
+use React\EventLoop\LoopInterface;
 use Bunny\Async\Client;
 use Bunny\Channel;
 use Bunny\Message;
-use React\EventLoop\Loop;
-use React\Async;
 
 class BunnyConsumer extends ConfigLoader
 {
-	private $loop;
-	private $queue;
-	private $client;
-	private $channel;
-	private $callback;
-	private $consumerTag;
+	private Client $client;
+	private Channel $channel;
+	private string $consumerTag;
 
-	public function __construct()
+	public function __construct(LoopInterface $loop, private string $queue, private callable $callback)
 	{
 		echo ("Consumer Construct\n");
 		parent::__construct();
-		$this->loop = Loop::get();
-		$this->client = new Client($this->loop, $this->config["bunny"]);
 		$this->consumerTag = bin2hex(random_bytes(8));
-		Async\Await($this->client->connect()->then($this->connected(...)));
+		$this->client = new Client($loop, $this->config["bunny"]);
+		$this->client->connect()->then($this->getChannel(...))->then($this->consume(...));
 	}
 
 	public function __destruct()
@@ -40,31 +35,17 @@ class BunnyConsumer extends ConfigLoader
 		parent::__destruct();
 	}
 
-	private function connected(Client $client)
+	private function getChannel(Client $client)
 	{
-		echo ("Consumer Connected\n");
-		$client->channel()->then($this->channelReady(...));
+		return $client->channel();
 	}
 
-	private function channelReady(Channel $channel)
+	private function consume(Channel $channel)
 	{
-		echo ("Consumer Channel Ready\n");
 		$this->channel = $channel;
-		$this->channel->qos(0, 1)->then($this->qosReady(...));
-	}
-
-	private function qosReady()
-	{
-		echo ("Consumer QOS Ready\n");
-	}
-
-	public function run(string $queue, callable $callback): void
-	{
-		echo ("Consumer Run\n");
-		$this->queue = $queue;
-		$this->callback = $callback;
-		$this->channel->queueDeclare($queue);
-		Async\Await($this->channel->consume($this->process(...), $this->queue, $this->consumerTag));
+		$channel->qos(0, 1);
+		$this->channel->queueDeclare($this->queue);
+		$channel->consume($this->process(...), $this->queue);
 	}
 
 	private function process(Message $message, Channel $channel, Client $client)
@@ -74,11 +55,11 @@ class BunnyConsumer extends ConfigLoader
 		$channel->nack($message);
 	}
 
-	public function publish($queue, $data)
+	public function publish(string $queue, array $data): bool
 	{
 		echo ("Consumer Publish\n");
-		if (!$this->channel) return print_r("Channel Not Ready Yet\n");
+		if (!$this->channel) return false;
 		$this->channel->queueDeclare($queue);
-		$this->channel->publish(json_encode($data), [], '', $queue);
+		return Async\await($this->channel->publish(json_encode($data), [], '', $queue));
 	}
 }
