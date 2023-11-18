@@ -1,3 +1,3 @@
 {
-    "log_dir": "/var/www/discommand2/logs.d"
+    "log_dir": "logs.d"
 }
