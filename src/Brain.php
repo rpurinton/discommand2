@@ -17,8 +17,7 @@ class Brain extends ConfigLoader
     {
         try {
             parent::__construct();
-            $home_dir = shell_exec('echo ~');
-            $this->logger = new Logger($home_dir . '/logs.d');
+            $this->logger = new Logger("/home/$myName/logs.d");
             $this->loop = Loop::get();
             $this->bunny = new BunnyConsumer($this->loop, $myName, $this->inbox(...));
         } catch (ConfigurationException | LogException $e) {
