@@ -40,7 +40,7 @@ class BunnyConsumer extends ConfigLoader
 				$this->channel = $channel;
 				$channel->qos(0, 1);
 				$channel->queueDeclare($this->queue);
-				return $channel->consume($this->process(...), $this->queue, '', false, true);
+				return $channel->consume($this->process(...), $this->queue, $this->consumerTag);
 			}
 		);
 	}
