@@ -8,7 +8,7 @@ class Logger
 {
     private float $last_microttime = 0;
 
-    public function __construct(private string $log_dir = __DIR__ . '/../logs.d')
+    public function __construct(private string $log_dir)
     {
         $this->last_microttime = microtime(true);
         // Simulate a failure condition for testing purposes
@@ -20,11 +20,6 @@ class Logger
             throw new LogException("Failed to create log directory: {$this->log_dir}");
         }
         $this->log("Logger initialized");
-    }
-
-    public function getLogDir(): string
-    {
-        return $this->log_dir;
     }
 
     public function log($message, $level = 'INFO')
