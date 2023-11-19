@@ -13,7 +13,7 @@ class Brain extends SqlClient
     private LoopInterface $loop;
     private $bunny;
 
-    public function __construct(public $myName)
+    public function __construct(protected $myName)
     {
         try {
             parent::__construct($myName);

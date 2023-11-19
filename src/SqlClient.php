@@ -8,7 +8,7 @@ class SqlClient extends ConfigLoader
 {
     private $sql;
 
-    public function __construct(private $myName)
+    public function __construct(protected $myName)
     {
         try {
             parent::__construct($myName);
