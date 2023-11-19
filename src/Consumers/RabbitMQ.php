@@ -1,6 +1,6 @@
 <?php
 
-namespace RPurinton\Discommand2;
+namespace RPurinton\Discommand2\Consumers;
 
 use React\Async;
 use React\EventLoop\LoopInterface;
@@ -11,7 +11,7 @@ use Bunny\Exception\ClientException;
 use RPurinton\Discommand2\Exceptions\MessageQueueException;
 use RPurinton\Discommand2\Exceptions\NetworkException;
 
-class BunnyConsumer
+class RabbitMQ
 {
 	private Client $client;
 	private ?Channel $channel = null;

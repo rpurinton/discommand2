@@ -7,6 +7,7 @@ use React\EventLoop\LoopInterface;
 use RPurinton\Discommand2\GlobalExceptionHandler;
 use RPurinton\Discommand2\Exceptions\ConfigurationException;
 use RPurinton\Discommand2\Exceptions\LogException;
+use RPurinton\Discommand2\Consumers\RabbitMQ;
 
 class Brain extends SqlClient
 {
@@ -19,7 +20,7 @@ class Brain extends SqlClient
             parent::__construct($myName);
             set_exception_handler((new GlobalExceptionHandler($this->logger))->handleException(...));
             $this->loop = Loop::get();
-            $this->bunny = new BunnyConsumer($this->config["bunny"] ?? [], $this->loop, $myName, $this->inbox(...));
+            $this->bunny = new RabbitMQ($this->config["bunny"] ?? [], $this->loop, $myName, $this->inbox(...));
         } catch (ConfigurationException | LogException $e) {
             // Handle exception (log or rethrow)
             throw $e;
@@ -27,7 +28,7 @@ class Brain extends SqlClient
             // Handle other exceptions
             throw $e;
         } finally {
-            // Always acknowledge the message
+            $this->logger->log("$myName is alive.");
             return $this;
         }
     }
