@@ -7,7 +7,7 @@ class GlobalExceptionHandler
 {
     public function __construct(private $logger)
     {
-        set_exception_handler([$this, 'handleException']);
+        //set_exception_handler([$this, 'handleException']);
     }
 
     public function handleException(\Throwable $exception): void
