@@ -34,11 +34,11 @@ class SqlClient extends ConfigLoader
             $this->sql = mysqli_connect($this->config["sql"]["host"], $this->myName, $this->myName, $this->myName);
             if (!$this->sql) {
                 $this->logger->log("Failed to connect to MySQL: " . mysqli_connect_error(), "ERROR");
-                die("Failed to connect to MySQL: " . mysqli_connect_error());
+                die();
             }
             if (!$this->query("SELECT 1;")) {
-                $this->logger->log("Failed to connect to MySQL: " . mysqli_error($this->sql), "ERROR");
-                die("Failed to connect to MySQL: " . mysqli_error($this->sql));
+                $this->logger->log("Failed to query to MySQL: " . mysqli_error($this->sql), "ERROR");
+                die();
             }
         } catch (SqlException $e) {
             throw $e;
