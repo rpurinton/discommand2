@@ -16,6 +16,10 @@ class Brain extends SqlClient
         try {
             parent::__construct($myName);
             $this->loop = Loop::get();
+            $result = $this->query("DESCRIBE `messages`;");
+            while ($row = $result->fetch_assoc()) {
+                $this->logger->log("Column: " . $row["Field"]);
+            }
             $this->modules["bunny"] = new RabbitMQ($this->config["bunny"] ?? [], $this->loop, $myName, $this->inbox(...));
         } catch (\Throwable $e) {
             // Handle other exceptions
