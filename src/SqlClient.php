@@ -10,15 +10,9 @@ class SqlClient extends ConfigLoader
 
     public function __construct($myName)
     {
-        try {
-            parent::__construct($myName);
-            $this->connect();
-        } catch (SqlException $e) {
-            throw $e;
-        } catch (\Throwable $e) {
-            throw $e;
-        } finally {
-            return $this;
+        parent::__construct($myName);
+        if (!$this->connect()) {
+            throw new SqlException("Failed to connect to MySQL.");
         }
     }
 
@@ -27,45 +21,15 @@ class SqlClient extends ConfigLoader
         if ($this->sql) mysqli_close($this->sql);
     }
 
-    private function connect(): void
+    private function connect(): bool
     {
-        try {
-            $this->sql = mysqli_connect($this->config["sql"]["host"], $this->myName, $this->myName, $this->myName);
-            if (!$this->sql) {
-                $this->logger->log("Failed to connect to MySQL: " . mysqli_connect_error(), "ERROR");
-                die();
-            }
-            mysqli_set_charset($this->sql, "utf8mb4");
-            mysqli_query($this->sql, "SET NAMES 'utf8mb4'");
-            mysqli_query($this->sql, "SET CHARACTER SET utf8mb4");
-            mysqli_query($this->sql, "SET CHARACTER_SET_CONNECTION=utf8mb4");
-            mysqli_query($this->sql, "SET SQL_MODE = ''");
-            mysqli_query($this->sql, "SET time_zone = '+00:00'");
-            mysqli_query($this->sql, "SET @@session.sql_mode = 'NO_ENGINE_SUBSTITUTION'");
-            mysqli_query($this->sql, "SET @@session.innodb_strict_mode = 1");
-            mysqli_query($this->sql, "SET @@session.innodb_flush_log_at_trx_commit = 1");
-            mysqli_query($this->sql, "SET @@session.innodb_file_per_table = 1");
-            mysqli_query($this->sql, "SET @@session.innodb_large_prefix = 1");
-            mysqli_query($this->sql, "SET @@session.innodb_buffer_pool_size = 134217728");
-            mysqli_query($this->sql, "SET @@session.innodb_log_file_size = 134217728");
-            mysqli_query($this->sql, "SET @@session.innodb_flush_method = O_DIRECT");
-            mysqli_query($this->sql, "SET @@session.innodb_log_buffer_size = 8388608");
-            mysqli_query($this->sql, "SET @@session.innodb_lock_wait_timeout = 50");
-            mysqli_query($this->sql, "SET @@session.innodb_rollback_on_timeout = 1");
-            mysqli_query($this->sql, "SET @@session.innodb_print_all_deadlocks = 1");
-            mysqli_query($this->sql, "SET @@session.innodb_autoinc_lock_mode = 2");
-            mysqli_query($this->sql, "SET @@session.innodb_stats_on_metadata = 0");
-            mysqli_query($this->sql, "SET @@session.innodb_strict_mode = 1");
-            mysqli_query($this->sql, "SET @@session.innodb_file_format = 'Barracuda'");
-            mysqli_query($this->sql, "SET @@session.innodb_file_format_max = 'Barracuda'");
-            mysqli_query($this->sql, "SET @@session.innodb_buffer_pool_instances = 1");
-            mysqli_query($this->sql, "SET @@session.innodb_buffer_pool_chunk_size = 134217728");
-            $this->logger->log("Connected to MySQL.");
-        } catch (SqlException $e) {
-            throw $e;
-        } catch (\Throwable $e) {
-            throw $e;
+        $this->sql = mysqli_connect($this->config["sql"]["host"], $this->myName, $this->myName, $this->myName);
+        if (!$this->sql) {
+            $this->logger->log("Failed to connect to MySQL: " . mysqli_connect_error(), "ERROR");
+            return false;
         }
+        $this->logger->log("Connected to MySQL.");
+        return true;
     }
 
     public function escape($string): ?string
