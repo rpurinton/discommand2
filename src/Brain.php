@@ -4,25 +4,31 @@ namespace RPurinton\Discommand2;
 
 use React\EventLoop\Loop;
 use React\EventLoop\LoopInterface;
+use RPurinton\Discommand2\GlobalExceptionHandler;
 use RPurinton\Discommand2\Exceptions\ConfigurationException;
 use RPurinton\Discommand2\Exceptions\LogException;
 
-class Brain extends ConfigLoader
+class Brain extends SqlClient
 {
     private LoopInterface $loop;
     private $bunny;
-    private $logger;
 
-    public function __construct(private $myName)
+    public function __construct(public $myName)
     {
         try {
-            parent::__construct();
-            $this->logger = new Logger("/home/$myName/logs.d");
+            parent::__construct($myName);
+            set_exception_handler((new GlobalExceptionHandler($this->logger))->handleException(...));
             $this->loop = Loop::get();
-            $this->bunny = new BunnyConsumer($this->loop, $myName, $this->inbox(...));
+            $this->bunny = new BunnyConsumer($this->config["bunny"] ?? [], $this->loop, $myName, $this->inbox(...));
         } catch (ConfigurationException | LogException $e) {
             // Handle exception (log or rethrow)
             throw $e;
+        } catch (\Throwable $e) {
+            // Handle other exceptions
+            throw $e;
+        } finally {
+            // Always acknowledge the message
+            return $this;
         }
     }
 

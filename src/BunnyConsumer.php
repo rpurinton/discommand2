@@ -11,7 +11,7 @@ use Bunny\Exception\ClientException;
 use RPurinton\Discommand2\Exceptions\MessageQueueException;
 use RPurinton\Discommand2\Exceptions\NetworkException;
 
-class BunnyConsumer extends ConfigLoader
+class BunnyConsumer
 {
 	private Client $client;
 	private ?Channel $channel = null;
@@ -19,13 +19,12 @@ class BunnyConsumer extends ConfigLoader
 	private string $queue;
 	private $callback;
 
-	public function __construct(LoopInterface $loop, string $queue, $callback)
+	public function __construct(array $options, LoopInterface $loop, string $queue, $callback)
 	{
-		parent::__construct();
 		$this->queue = $queue;
 		$this->callback = $callback;
 		$this->consumerTag = bin2hex(random_bytes(8));
-		$this->client = new Client($loop, $this->config["bunny"] ?? []);
+		$this->client = new Client($loop, $options);
 		$this->client->connect()->then(
 			function (Client $client) {
 				return $client->channel();
