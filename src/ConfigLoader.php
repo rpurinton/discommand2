@@ -27,6 +27,7 @@ class ConfigLoader
         } catch (\Throwable $e) {
             throw $e;
         } finally {
+            $this->logger->log("ConfigLoader initialized");
             return $this;
         }
     }

@@ -24,7 +24,7 @@ class Brain extends SqlClient
                 echo ("Debug: " . $row["Field"] . "\n");
             }
             $this->loop = Loop::get();
-            $this->modules["bunny"] = new RabbitMQ($this->config["bunny"] ?? [], $this->loop, $myName, $this->inbox(...));
+            $this->modules["bunny"] = new RabbitMQ($this->config["bunny"] ?? [], $this->loop, $myName, $this->inbox(...), $this->logger);
         } catch (\Throwable $e) {
             // Handle other exceptions
             throw $e;

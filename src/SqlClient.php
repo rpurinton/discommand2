@@ -28,7 +28,7 @@ class SqlClient extends ConfigLoader
             $this->logger->log("Failed to connect to MySQL: " . mysqli_connect_error(), "ERROR");
             return false;
         }
-        $this->logger->log("Connected to MySQL.");
+        $this->logger->log("SqlClient initialized");
         return true;
     }
     public function query($query)

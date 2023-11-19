@@ -10,6 +10,8 @@ use Bunny\Message;
 use Bunny\Exception\ClientException;
 use RPurinton\Discommand2\Exceptions\MessageQueueException;
 use RPurinton\Discommand2\Exceptions\NetworkException;
+use RPurinton\Discommand2\ConfigLoader;
+use RPurinton\Discommand2\Logger;
 
 class RabbitMQ
 {
@@ -19,7 +21,7 @@ class RabbitMQ
 	private string $queue;
 	private $callback;
 
-	public function __construct(array $options, LoopInterface $loop, string $queue, $callback)
+	public function __construct(array $options, LoopInterface $loop, string $queue, $callback, private Logger $logger)
 	{
 		$this->queue = $queue;
 		$this->callback = $callback;
@@ -42,6 +44,7 @@ class RabbitMQ
 				return $channel->consume($this->process(...), $this->queue, $this->consumerTag);
 			}
 		);
+		$this->logger->log("RabbitMQ initialized");
 	}
 
 	private function process(Message $message, Channel $channel, Client $client)
