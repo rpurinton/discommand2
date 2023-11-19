@@ -40,6 +40,10 @@ class Brain extends SqlClient
     {
         try {
             $this->logger->log("Received message " . trim(substr(print_r($message, true), 6)));
+            $microtime = number_format(microtime(true), 6, '.', '');
+            $role = "system";
+            $content = $this->escape(json_encode($message));
+            $message_id = $this->insert("INSERT INTO `messages` (`microtime`, `role`, `content`) VALUES ('$microtime', '$role', '$content')");
             // Do something with the message
             return true;
         } catch (\Throwable $e) {
