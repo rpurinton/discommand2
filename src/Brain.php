@@ -4,23 +4,19 @@ namespace RPurinton\Discommand2;
 
 use React\EventLoop\Loop;
 use React\EventLoop\LoopInterface;
-use RPurinton\Discommand2\GlobalExceptionHandler;
-use RPurinton\Discommand2\Exceptions\ConfigurationException;
-use RPurinton\Discommand2\Exceptions\LogException;
-use RPurinton\Discommand2\Consumers\RabbitMQ;
+use RPurinton\Discommand2\Modules\RabbitMQ;
 
 class Brain extends SqlClient
 {
     private LoopInterface $loop;
-    private $bunny;
+    private $modules = [];
 
     public function __construct(protected $myName)
     {
         try {
             parent::__construct($myName);
-            set_exception_handler((new GlobalExceptionHandler($this->logger))->handleException(...));
             $this->loop = Loop::get();
-            $this->bunny = new RabbitMQ($this->config["bunny"] ?? [], $this->loop, $myName, $this->inbox(...));
+            $this->modules["bunny"] = new RabbitMQ($this->config["bunny"] ?? [], $this->loop, $myName, $this->inbox(...));
         } catch (\Throwable $e) {
             // Handle other exceptions
             throw $e;
@@ -41,9 +37,7 @@ class Brain extends SqlClient
         try {
             $this->logger->log("Received message " . trim(substr(print_r($message, true), 6)));
             // Do something with the message
-        } catch (LogException $e) {
-            // Handle logging exception
-            throw $e;
+            return true;
         } catch (\Throwable $e) {
             // Handle other exceptions
             throw $e;

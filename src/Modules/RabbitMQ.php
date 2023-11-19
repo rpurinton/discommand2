@@ -1,6 +1,6 @@
 <?php
 
-namespace RPurinton\Discommand2\Consumers;
+namespace RPurinton\Discommand2\Modules;
 
 use React\Async;
 use React\EventLoop\LoopInterface;
