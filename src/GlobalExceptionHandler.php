@@ -11,6 +11,7 @@ class GlobalExceptionHandler
 
     public function handleException($exception)
     {
+        echo ("Exception: {$exception->getMessage()}\n");
         $this->logger->log($exception->getMessage(), 'ERROR');
         // Signal error status for systemd
         if (trim(shell_exec('whoami') ?? "") === 'root') {
