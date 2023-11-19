@@ -8,7 +8,7 @@ class SqlClient extends ConfigLoader
 {
     private $sql;
 
-    public function __construct(protected $myName)
+    public function __construct($myName)
     {
         try {
             parent::__construct($myName);
@@ -30,6 +30,7 @@ class SqlClient extends ConfigLoader
     private function connect(): void
     {
         try {
+            echo ("Debug: Trying to connect to " . $this->config["sql"]["host"] . " with " . $this->myName . " " . $this->myName . " " . $this->myName . "\n");
             $this->sql = mysqli_connect($this->config["sql"]["host"], $this->myName, $this->myName, $this->myName);
             $result = $this->query("SELECT 1;");
             if (!$result) {

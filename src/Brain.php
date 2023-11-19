@@ -11,7 +11,7 @@ class Brain extends SqlClient
     private LoopInterface $loop;
     private $modules = [];
 
-    public function __construct(protected $myName)
+    public function __construct($myName)
     {
         try {
             parent::__construct($myName);
