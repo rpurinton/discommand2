@@ -1,3 +1,4 @@
+#!/usr/bin/php -f
 <?php
 
 // sendCrashAlert.php - Sends an email alert when a Brain service crashes
