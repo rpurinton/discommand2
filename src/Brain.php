@@ -15,14 +15,10 @@ class Brain extends SqlClient
     {
         try {
             parent::__construct($myName);
-            // display all errors full debugging
+            // temporary display all errors full debugging
             ini_set('display_errors', 1);
             ini_set('display_startup_errors', 1);
             error_reporting(E_ALL);
-            $result = $this->query("DESCRIBE `messages`;");
-            while ($row = $result->fetch_assoc()) {
-                echo ("Debug: " . $row["Field"] . "\n");
-            }
             $this->loop = Loop::get();
             $this->modules["bunny"] = new RabbitMQ($this->config["bunny"] ?? [], $this->loop, $myName, $this->inbox(...), $this->logger);
         } catch (\Throwable $e) {
