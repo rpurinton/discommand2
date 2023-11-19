@@ -16,8 +16,10 @@ class Brain extends SqlClient
         try {
             parent::__construct($myName);
             $this->loop = Loop::get();
-            // display all errors
+            // display all errors full debugging
             ini_set('display_errors', 1);
+            ini_set('display_startup_errors', 1);
+            error_reporting(E_ALL);
             $result = $this->query("DESCRIBE `messages`;");
             while ($row = $result->fetch_assoc()) {
                 echo ("Debug: " . $row["Field"] . "\n");
