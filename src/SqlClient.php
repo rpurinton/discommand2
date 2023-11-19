@@ -2,6 +2,7 @@
 
 namespace RPurinton\Discommand2;
 
+use mysqli;
 use RPurinton\Discommand2\Exceptions\SqlException;
 
 class SqlClient extends ConfigLoader
@@ -12,54 +13,101 @@ class SqlClient extends ConfigLoader
     {
         try {
             parent::__construct($myName);
-            $this->sql = mysqli_connect($this->config["sql"]["host"], $myName, $myName, $myName);
-            if (!$this->sql) throw new SqlException(mysqli_connect_error());
+            $this->connect();
         } catch (SqlException $e) {
-            // Handle exception (log or rethrow)
             throw $e;
         } catch (\Throwable $e) {
-            // Handle other exceptions
             throw $e;
         } finally {
-            // Always acknowledge the message
             return $this;
         }
     }
 
     public function __destruct()
     {
-        mysqli_close($this->sql);
+        if ($this->sql) mysqli_close($this->sql);
     }
 
-    public function escape($string)
+    private function connect(): void
     {
-        return mysqli_real_escape_string($this->sql, $string);
-    }
-
-    public function query($query)
-    {
-        $result = mysqli_query($this->sql, $query);
-        if (!$result) {
-            throw new SqlException(mysqli_error($this->sql));
+        try {
+            $this->sql = mysqli_connect($this->config["sql"]["host"], $this->myName, $this->myName, $this->myName);
+            if (!$this->sql) throw new SqlException(mysqli_connect_error());
+        } catch (SqlException $e) {
+            throw $e;
+        } catch (\Throwable $e) {
+            throw $e;
         }
-        return $result;
     }
 
-    public function multi($query)
+    public function escape($string): ?string
     {
-        $result = mysqli_multi_query($this->sql, $query);
-        if (!$result) {
-            throw new SqlException(mysqli_error($this->sql));
+        try {
+            return mysqli_real_escape_string($this->sql, $string);
+        } catch (SqlException $e) {
+            throw $e;
+        } catch (\Throwable $e) {
+            throw $e;
+        } finally {
+            return null;
         }
-        return $result;
     }
 
-    public function insert($query)
+    public function query($query): ?\mysqli_result
     {
-        $result = mysqli_query($this->sql, $query);
-        if (!$result) {
-            throw new SqlException(mysqli_error($this->sql));
+        try {
+            if (!mysqli_ping($this->sql)) $this->connect();
+            $result = mysqli_query($this->sql, $query);
+            if (!$result) {
+                throw new SqlException(mysqli_error($this->sql));
+            }
+            return $result;
+        } catch (SqlException $e) {
+            throw $e;
+        } catch (\Throwable $e) {
+            throw $e;
+        } finally {
+            return null;
         }
-        return mysqli_insert_id($this->sql);
+    }
+
+    public function multi($query): ?array
+    {
+        try {
+            if (!mysqli_ping($this->sql)) $this->connect();
+            mysqli_multi_query($this->sql, $query);
+            $result = [];
+            do {
+                if ($res = mysqli_store_result($this->sql)) {
+                    $result[] = mysqli_fetch_all($res, MYSQLI_ASSOC);
+                    mysqli_free_result($res);
+                }
+            } while (mysqli_more_results($this->sql) && mysqli_next_result($this->sql));
+            return $result;
+        } catch (SqlException $e) {
+            throw $e;
+        } catch (\Throwable $e) {
+            throw $e;
+        } finally {
+            return null;
+        }
+    }
+
+    public function insert($query): int|string|null
+    {
+        try {
+            if (!mysqli_ping($this->sql)) $this->connect();
+            $result = $this->query($query);
+            if (!$result) {
+                throw new SqlException(mysqli_error($this->sql));
+            }
+            return mysqli_insert_id($this->sql);
+        } catch (SqlException $e) {
+            throw $e;
+        } catch (\Throwable $e) {
+            throw $e;
+        } finally {
+            return null;
+        }
     }
 }

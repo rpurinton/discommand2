@@ -32,6 +32,12 @@ class Brain extends SqlClient
         }
     }
 
+    public function __destruct()
+    {
+        $this->loop->stop();
+        parent::__destruct();
+    }
+
     private function inbox(array $message): bool
     {
         try {
