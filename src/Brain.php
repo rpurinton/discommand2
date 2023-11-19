@@ -10,6 +10,7 @@ class Brain extends SqlClient
 {
     private LoopInterface $loop;
     private $modules = [];
+    private $tokenCounter;
 
     public function __construct($myName)
     {
@@ -19,6 +20,7 @@ class Brain extends SqlClient
             ini_set('display_errors', 1);
             ini_set('display_startup_errors', 1);
             error_reporting(E_ALL);
+            $this->tokenCounter = new TokenCounter();
             $this->loop = Loop::get();
             $this->modules["bunny"] = new RabbitMQ($this->config["bunny"] ?? [], $this->loop, $myName, $this->inbox(...), $this->logger);
         } catch (\Throwable $e) {
@@ -43,7 +45,8 @@ class Brain extends SqlClient
             $microtime = number_format(microtime(true), 6, '.', '');
             $role = "system";
             $content = $this->escape(json_encode($message));
-            $message_id = $this->insert("INSERT INTO `messages` (`microtime`, `role`, `content`) VALUES ('$microtime', '$role', '$content')");
+            $tokens = $this->tokenCounter->count($content);
+            $message_id = $this->insert("INSERT INTO `messages` (`microtime`, `role`, `content`, `tokens`) VALUES ('$microtime', '$role', '$content', '$tokens')");
             // Do something with the message
             return true;
         } catch (\Throwable $e) {

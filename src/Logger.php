@@ -31,12 +31,7 @@ class Logger
         while (strlen($diff) < 14) $diff = '0' . $diff;
         $log_file = $this->log_dir . '/' . date('Y-m-d') . '.log';
         $log_message = "[" . date('Y-m-d H:i:s') . '.' . substr(number_format(microtime(true), 6, '.', ''), -6) . "] ($diff) [$level] $message\n";
-        // Simulate a failure condition for testing purposes
-        if ($this->log_dir === '/root/invalid/log/dir' || file_put_contents($log_file, $log_message, FILE_APPEND) === false) {
-            throw new LogException("Failed to write to log file: {$log_file}");
-        }
-        echo $log_message;
-        // When running from CLI, potentially log to systemd journal
+
         $level = strtoupper($level);
         $syslogPriority = match ($level) {
             'EMERGENCY' => 'emerg',
@@ -51,5 +46,6 @@ class Logger
         };
         $log_message = escapeshellarg($log_message);
         exec("echo $log_message | systemd-cat -p $syslogPriority -t discommand2");
+        echo $log_message;
     }
 }
