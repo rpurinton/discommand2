@@ -31,75 +31,90 @@ class SqlClient extends ConfigLoader
         $this->logger->log("Connected to MySQL.");
         return true;
     }
-
-    public function escape($string): ?string
+    public function query($query)
     {
-        try {
-            return mysqli_real_escape_string($this->sql, $string);
-        } catch (SqlException $e) {
-            throw $e;
-        } catch (\Throwable $e) {
-            throw $e;
-        } finally {
-            return null;
-        }
+        if (!mysqli_ping($this->sql)) $this->connect();
+        return mysqli_query($this->sql, $query);
     }
 
-    public function query($query): ?\mysqli_result
+    public function count($result)
     {
-        try {
-            if (!mysqli_ping($this->sql)) $this->connect();
-            $result = mysqli_query($this->sql, $query);
-            if (!$result) {
-                throw new SqlException(mysqli_error($this->sql));
+        return mysqli_num_rows($result);
+    }
+
+    public function insert($query)
+    {
+        $result = $this->query($query);
+        if (!$result) {
+            throw new \Exception('MySQL insert error: ' . \mysqli_error($this->sql));
+        }
+        return $this->insert_id();
+    }
+
+    public function assoc($result)
+    {
+        return mysqli_fetch_assoc($result);
+    }
+
+    public function escape($text)
+    {
+        return mysqli_real_escape_string($this->sql, $text);
+    }
+
+    public function single($query)
+    {
+        if (!mysqli_ping($this->sql)) $this->connect();
+        return mysqli_fetch_assoc(mysqli_query($this->sql, $query));
+    }
+
+    public function multi($query): array
+    {
+        if (!mysqli_ping($this->sql)) $this->connect();
+        mysqli_multi_query($this->sql, $query);
+        $result = [];
+        do {
+            if ($res = mysqli_store_result($this->sql)) {
+                $result[] = mysqli_fetch_all($res, MYSQLI_ASSOC);
+                mysqli_free_result($res);
             }
-            return $result;
-        } catch (SqlException $e) {
-            throw $e;
-        } catch (\Throwable $e) {
-            throw $e;
-        } finally {
-            return null;
-        }
+        } while (mysqli_more_results($this->sql) && mysqli_next_result($this->sql));
+        return $result;
     }
 
-    public function multi($query): ?array
+    public function insert_id()
+    {
+        return \mysqli_insert_id($this->sql);
+    }
+
+    public function query_function($query, $db_name = null)
     {
         try {
-            if (!mysqli_ping($this->sql)) $this->connect();
-            mysqli_multi_query($this->sql, $query);
-            $result = [];
-            do {
-                if ($res = mysqli_store_result($this->sql)) {
-                    $result[] = mysqli_fetch_all($res, MYSQLI_ASSOC);
-                    mysqli_free_result($res);
+            // select the database to query
+            if (!empty($db_name)) {
+                \mysqli_select_db($this->sql, $db_name);
+            }
+            $result = $this->multi($query);
+            if (!count($result)) {
+                throw new \Exception('MySQL query error: ' . \mysqli_error($this->sql));
+            }
+            // return an array with success true and a string of the results in csv format with headers and finally a total number of rows returned
+            $csv = "";
+            foreach ($result as $key => $value) {
+                $csv .= implode(",", array_keys($value[0])) . "\n";
+                foreach ($value as $key2 => $value2) {
+                    $csv .= implode(",", $value2) . "\n";
                 }
-            } while (mysqli_more_results($this->sql) && mysqli_next_result($this->sql));
-            return $result;
-        } catch (SqlException $e) {
-            throw $e;
-        } catch (\Throwable $e) {
-            throw $e;
-        } finally {
-            return null;
-        }
-    }
-
-    public function insert($query): int|string|null
-    {
-        try {
-            if (!mysqli_ping($this->sql)) $this->connect();
-            $result = $this->query($query);
-            if (!$result) {
-                throw new SqlException(mysqli_error($this->sql));
             }
-            return mysqli_insert_id($this->sql);
-        } catch (SqlException $e) {
-            throw $e;
+            return ["success" => true, "csv" => $csv];
+        } catch (\Exception $e) {
+            return ["success" => false, "error" => $e->getMessage()];
+        } catch (\Error $e) {
+            return ["success" => false, "error" => $e->getMessage()];
         } catch (\Throwable $e) {
-            throw $e;
+            return ["success" => false, "error" => $e->getMessage()];
         } finally {
-            return null;
+            // select the original database
+            \mysqli_select_db($this->sql, $this->config["sql"]["db"]);
         }
     }
 }

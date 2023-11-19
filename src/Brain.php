@@ -15,7 +15,6 @@ class Brain extends SqlClient
     {
         try {
             parent::__construct($myName);
-            $this->loop = Loop::get();
             // display all errors full debugging
             ini_set('display_errors', 1);
             ini_set('display_startup_errors', 1);
@@ -24,6 +23,7 @@ class Brain extends SqlClient
             while ($row = $result->fetch_assoc()) {
                 echo ("Debug: " . $row["Field"] . "\n");
             }
+            $this->loop = Loop::get();
             $this->modules["bunny"] = new RabbitMQ($this->config["bunny"] ?? [], $this->loop, $myName, $this->inbox(...));
         } catch (\Throwable $e) {
             // Handle other exceptions
