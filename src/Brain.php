@@ -21,9 +21,6 @@ class Brain extends SqlClient
             set_exception_handler((new GlobalExceptionHandler($this->logger))->handleException(...));
             $this->loop = Loop::get();
             $this->bunny = new RabbitMQ($this->config["bunny"] ?? [], $this->loop, $myName, $this->inbox(...));
-        } catch (ConfigurationException | LogException $e) {
-            // Handle exception (log or rethrow)
-            throw $e;
         } catch (\Throwable $e) {
             // Handle other exceptions
             throw $e;
