@@ -2,7 +2,6 @@
 
 namespace RPurinton\Discommand2;
 
-use mysqli;
 use RPurinton\Discommand2\Exceptions\SqlException;
 
 class SqlClient extends ConfigLoader
