@@ -35,24 +35,21 @@ class Logger
         if ($this->log_dir === '/root/invalid/log/dir' || file_put_contents($log_file, $log_message, FILE_APPEND) === false) {
             throw new LogException("Failed to write to log file: {$log_file}");
         }
-        if (trim(shell_exec('whoami') ?? "") === 'root') {
-            echo $log_message;
-        } else {
-            // When running from CLI, potentially log to systemd journal
-            $level = strtoupper($level);
-            $syslogPriority = match ($level) {
-                'EMERGENCY' => 'emerg',
-                'ALERT'     => 'alert',
-                'CRITICAL'  => 'crit',
-                'ERROR'     => 'err',
-                'WARNING'   => 'warning',
-                'NOTICE'    => 'notice',
-                'INFO'      => 'info',
-                'DEBUG'     => 'debug',
-                default     => 'info',
-            };
-            $log_message = escapeshellarg($log_message);
-            exec("echo $log_message | systemd-cat -p $syslogPriority -t discommand2");
-        }
+        echo $log_message;
+        // When running from CLI, potentially log to systemd journal
+        $level = strtoupper($level);
+        $syslogPriority = match ($level) {
+            'EMERGENCY' => 'emerg',
+            'ALERT'     => 'alert',
+            'CRITICAL'  => 'crit',
+            'ERROR'     => 'err',
+            'WARNING'   => 'warning',
+            'NOTICE'    => 'notice',
+            'INFO'      => 'info',
+            'DEBUG'     => 'debug',
+            default     => 'info',
+        };
+        $log_message = escapeshellarg($log_message);
+        exec("echo $log_message | systemd-cat -p $syslogPriority -t discommand2");
     }
 }
