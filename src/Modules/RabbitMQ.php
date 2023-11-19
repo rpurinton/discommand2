@@ -49,6 +49,8 @@ class RabbitMQ
 
 	private function process(Message $message, Channel $channel, Client $client)
 	{
+		unset($message->headers["delivery-mode"]);
+		$message->headers["arrived via"] = "RabbitMQ";
 		$message->headers["content"] = $message->content;
 		if (($this->callback)($message->headers)) return $channel->ack($message);
 		$channel->nack($message);
