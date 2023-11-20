@@ -37,10 +37,12 @@ class RabbitMQ
 	private function process(Message $message, Channel $channel, Client $client)
 	{
 		if (isset($message->headers["Die"]) && $message->headers["Die"]) {
-			Async\await($channel->ack($message));
 			$this->brain->log("Received die message... D: goodbye cruel world.");
 			$this->brain->log($this->queue . " died.");
-			exit(0);
+			$channel->ack($message)->then(function () use ($client) {
+				$client->disconnect();
+				exit(0);
+			});
 		}
 		unset($message->headers["delivery-mode"]);
 		if (!isset($message->headers["Via"])) $message->headers["Via"] = "RabbitMQ";
