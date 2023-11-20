@@ -11,13 +11,7 @@ class RabbitMQTest extends TestCase
 {
     public function testCanBeCreated(): void
     {
-        $options = [
-            "host" => "localhost",
-            "vhost" => "discommand2",
-            "port" => 5672,
-            "user" => "discommand",
-            "password" => "discommand"
-        ];
+        $options = json_decode(file_get_contents(__DIR__ . '/../../configs/bunny.json'), true);
         $loop = Loop::get();
         $callback = function ($message) {
             return true;
