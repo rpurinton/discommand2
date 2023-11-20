@@ -30,16 +30,12 @@ class RabbitMQ
 		Async\await($this->channel->qos(0, 1));
 		Async\await($this->channel->queueDeclare($this->queue));
 		$this->channel->consume($this->process(...), $this->queue, $this->consumerTag);
-		$this->brain->log("RabbitMQ connected");
+		$this->brain->log("RabbitMQ connected.");
 		return true;
 	}
 
 	private function process(Message $message, Channel $channel, Client $client)
 	{
-		unset($message->headers["delivery-mode"]);
-		if (!isset($message->headers["Via"])) $message->headers["Via"] = "RabbitMQ";
-		$message->headers["Content"] = $message->content;
-		$this->brain->log("Received message " . trim(substr(print_r($message->headers, true), 6)));
 		if (isset($message->headers["Die"]) && $message->headers["Die"]) {
 			Async\await($channel->ack($message));
 			$this->brain->log("Received die message... D: goodbye cruel world.");
@@ -47,6 +43,10 @@ class RabbitMQ
 			$this->brain->log($this->queue . " died.");
 			exit(0);
 		}
+		unset($message->headers["delivery-mode"]);
+		if (!isset($message->headers["Via"])) $message->headers["Via"] = "RabbitMQ";
+		$message->headers["Content"] = $message->content;
+		$this->brain->log("Received message " . trim(substr(print_r($message->headers, true), 6)));
 		if (($this->callback)($message->headers)) return $channel->ack($message);
 		$channel->nack($message);
 	}
