@@ -15,7 +15,9 @@ class NetworkExceptionTest extends TestCase
         $loop = $this->createMock(LoopInterface::class);
         $loop->method('run')->will($this->throwException(new ClientException('Simulated connection failure')));
         $config = new ConfigLoader('testBrain');
-        $rabbitmq = new RabbitMQ(["host" => "invalid"], $loop, 'testBrain', function () {
+        $options = $config->getConfig("bunny");
+        $options['host'] = 'invalid';
+        $rabbitmq = new RabbitMQ($options, $loop, 'testBrain', function () {
             // Do nothing
         }, $config->getLogger());
     }
