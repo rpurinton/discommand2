@@ -35,7 +35,7 @@ class RabbitMQ
 		return true;
 	}
 
-	private function process(Message $message, Channel $channel, Client $client)
+	public function process(Message $message, Channel $channel, Client $client)
 	{
 		unset($message->headers["delivery-mode"]);
 		if (!isset($message->headers["Via"])) $message->headers["Via"] = "RabbitMQ";
