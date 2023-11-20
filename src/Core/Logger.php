@@ -14,7 +14,7 @@ class Logger
     public function __construct(public string $myName)
     {
         try {
-            set_exception_handler($this->handleException(...));
+            set_exception_handler([$this, 'handleException']);
             if (!is_dir("/home/$myName")) throw new FatalException("$myName has not been created. Please run 'newBrain.php $myName' first.");
             $this->boot_microtime = microtime(true);
             $this->last_microttime = microtime(true);
