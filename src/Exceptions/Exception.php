@@ -2,6 +2,6 @@
 
 namespace RPurinton\Discommand2\Exceptions;
 
-class ConfigurationException extends \Exception
+class Exception extends \Exception
 {
 }

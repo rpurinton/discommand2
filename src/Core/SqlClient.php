@@ -2,7 +2,8 @@
 
 namespace RPurinton\Discommand2\Core;
 
-use RPurinton\Discommand2\Exceptions\SqlException;
+use RPurinton\Discommand2\Exceptions\Exception;
+use RPurinton\Discommand2\Exceptions\FatalException;
 
 class SqlClient extends ConfigLoader
 {
@@ -31,7 +32,7 @@ class SqlClient extends ConfigLoader
                 $this->myName
             );
         } catch (\mysqli_sql_exception $e) {
-            throw new SqlException("Failed to connect to MySQL: " . $e->getMessage());
+            throw new FatalException("Failed to connect to MySQL: " . $e->getMessage());
         }
 
         $this->log("SqlClient connected");
@@ -44,10 +45,10 @@ class SqlClient extends ConfigLoader
             $this->reconnectIfNeeded();
             $result = mysqli_query($this->sql, $query);
             if (!$result) {
-                throw new SqlException('MySQL query error: ' . mysqli_error($this->sql));
+                throw new Exception('MySQL query error: ' . mysqli_error($this->sql));
             }
         } catch (\mysqli_sql_exception $e) {
-            throw new SqlException($e->getMessage());
+            throw new Exception($e->getMessage());
         }
 
         return $result;
@@ -77,12 +78,9 @@ class SqlClient extends ConfigLoader
     {
         $this->reconnectIfNeeded();
         try {
-            $result = mysqli_query($this->sql, $query);
-            if (!$result) {
-                throw new SqlException('MySQL query error: ' . mysqli_error($this->sql));
-            }
+            $result = mysqli_query($this->sql, $query) or throw new Exception('MySQL query error: ' . mysqli_error($this->sql));
         } catch (\mysqli_sql_exception $e) {
-            throw new SqlException($e->getMessage());
+            throw new Exception($e->getMessage());
         }
 
         return mysqli_fetch_assoc($result);
@@ -94,7 +92,7 @@ class SqlClient extends ConfigLoader
         $result = [];
         try {
             if (!mysqli_multi_query($this->sql, $query)) {
-                throw new SqlException('MySQL multi-query error: ' . mysqli_error($this->sql));
+                throw new Exception('MySQL multi-query error: ' . mysqli_error($this->sql));
             }
 
             do {
@@ -104,7 +102,7 @@ class SqlClient extends ConfigLoader
                 }
             } while (mysqli_more_results($this->sql) && mysqli_next_result($this->sql));
         } catch (\mysqli_sql_exception $e) {
-            throw new SqlException($e->getMessage());
+            throw new Exception($e->getMessage());
         }
 
         return $result;

@@ -2,48 +2,30 @@
 
 namespace RPurinton\Discommand2\Core;
 
-use finfo;
-use RPurinton\Discommand2\Exceptions\ConfigurationException;
-use RPurinton\Discommand2\Exceptions\LogException;
+use RPurinton\Discommand2\Core\GlobalExceptionHandler;
+use RPurinton\Discommand2\Exceptions\FatalException;
 
-class ConfigLoader
+class ConfigLoader extends GlobalExceptionHandler
 {
     protected $config = [];
-    protected ?Logger $logger = null;
-    protected ?GlobalExceptionHandler $exceptionHandler = null;
 
-    public function __construct(public $myName)
+    public function __construct(string $myName)
     {
+        parent::__construct($myName);
         try {
-            $this->exceptionHandler = new GlobalExceptionHandler($this->logger);
-            $this->logger = new Logger($myName);
             foreach (glob(__DIR__ . "/../../configs/*.json") as $configFile) $this->config[basename($configFile, '.json')] = json_decode(file_get_contents($configFile), true);
             if (count($this->config)) $this->log("ConfigLoader initialized");
-            else throw new ConfigurationException("No configuration files found in conf.d");
+            else throw new FatalException("No configuration files found in conf.d");
         } catch (\Throwable $e) {
-            // Handle other exceptions
             throw $e;
         } finally {
             return $this;
         }
     }
 
-    public function getConfig(string $section): array
+    public function getConfig(string $section, int|string $key = null): mixed
     {
+        if ($key) return $this->config[$section][$key] ?? null;
         return $this->config[$section] ?? [];
-    }
-
-    public function getLogger(): Logger
-    {
-        return $this->logger;
-    }
-
-    public function log(string $message, string $level = 'INFO'): void
-    {
-        if (!$this->logger) {
-            echo "[ERROR][{$this->myName}] Logger not initialized yet: $message\n";
-            return;
-        }
-        $this->logger->log($message, $level);
     }
 }

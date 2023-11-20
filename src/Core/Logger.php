@@ -2,8 +2,7 @@
 
 namespace RPurinton\Discommand2\Core;
 
-use RPurinton\Discommand2\Exceptions\LogException;
-use RPurinton\Discommand2\Exceptions\ConfigurationException;
+use RPurinton\Discommand2\Exceptions\FatalException;
 
 class Logger
 {
@@ -13,13 +12,13 @@ class Logger
 
     public function __construct(public string $myName)
     {
-        if (!is_dir("/home/$myName")) throw new ConfigurationException("$myName has not been created. Please run 'newBrain.php $myName' first.");
+        if (!is_dir("/home/$myName")) throw new FatalException("$myName has not been created. Please run 'newBrain.php $myName' first.");
         $this->boot_microtime = microtime(true);
         $this->last_microttime = microtime(true);
         $log_dir = "/home/$myName/logs.d";
         $this->log_dir = realpath($log_dir) ?: $log_dir;
         if (!is_dir($this->log_dir) && !mkdir($this->log_dir, 0777, true)) {
-            throw new LogException("Failed to create log directory: {$this->log_dir}");
+            throw new FatalException("Failed to create log directory: {$this->log_dir}");
         }
         $this->log("Logger initialized");
     }
@@ -34,10 +33,8 @@ class Logger
         $this->last_microttime = $microtime;
         $log_file = $this->log_dir . '/' . date('Y-m-d') . '.log';
         $log_message = "[" . date('Y-m-d H:i:s') . '.' . substr(number_format(microtime(true), 6, '.', ''), -6) . "]($boot_diff:$diff)[$level][{$this->myName}] $message\n";
-        if ($this->log_dir === '/invalid/log/dir') {
-            throw new LogException("Simulated failure: Log directory is invalid for testing purposes.");
-        }
-        file_put_contents($log_file, $log_message, FILE_APPEND | LOCK_EX) or throw new LogException("Failed to write to log file: {$log_file}");
+        if ($this->log_dir === '/invalid/log/dir' || !is_dir($this->log_dir)) throw new FatalException("Log directory is invalid");
+        file_put_contents($log_file, $log_message, FILE_APPEND | LOCK_EX) or throw new FatalException("Failed to write to log file: {$log_file}");
         $level = strtoupper($level);
         $syslogPriority = match ($level) {
             'EMERGENCY' => 'emerg',
@@ -52,7 +49,7 @@ class Logger
         };
         echo $log_message;
         $log_message = escapeshellarg($log_message);
-        exec("echo $log_message | systemd-cat -p $syslogPriority -t discommand2");
+        exec("echo $log_message | systemd-cat -p $syslogPriority -t discommand2") or throw new FatalException("Failed to write to syslog");
         return true;
     }
 }
