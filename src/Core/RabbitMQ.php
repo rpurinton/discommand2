@@ -36,6 +36,10 @@ class RabbitMQ
 
 	private function process(Message $message, Channel $channel, Client $client)
 	{
+		unset($message->headers["delivery-mode"]);
+		if (!isset($message->headers["Via"])) $message->headers["Via"] = "RabbitMQ";
+		$message->headers["Content"] = $message->content;
+		$this->brain->log("Received message " . trim(substr(print_r($message->headers, true), 6)));
 		if (isset($message->headers["Die"]) && $message->headers["Die"]) {
 			$this->brain->log("Received die message... D: goodbye cruel world.");
 			$this->brain->log($this->queue . " died.");
@@ -43,13 +47,10 @@ class RabbitMQ
 				$client->disconnect();
 				exit(0);
 			});
+		} else {
+			if (($this->callback)($message->headers)) return $channel->ack($message);
+			$channel->nack($message);
 		}
-		unset($message->headers["delivery-mode"]);
-		if (!isset($message->headers["Via"])) $message->headers["Via"] = "RabbitMQ";
-		$message->headers["Content"] = $message->content;
-		$this->brain->log("Received message " . trim(substr(print_r($message->headers, true), 6)));
-		if (($this->callback)($message->headers)) return $channel->ack($message);
-		$channel->nack($message);
 	}
 
 	public function publish(string $queue, array $data): bool
