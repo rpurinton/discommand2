@@ -53,7 +53,7 @@ class RabbitMQ
 		$message->headers["Content"] = $message->content;
 		$this->logger->log("Received message " . trim(substr(print_r($message->headers, true), 6)));
 		if (isset($message->headers["die"]) && $message->headers["die"]) {
-			$channel->ack($message);
+			Async\await($channel->ack($message));
 			$this->logger->log("Received die message... D: goodbye cruel world.");
 			$this->disconnect();
 			$this->logger->log($this->queue . " died.");
