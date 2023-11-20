@@ -49,8 +49,16 @@ class RabbitMQ
 	private function process(Message $message, Channel $channel, Client $client)
 	{
 		unset($message->headers["delivery-mode"]);
-		$message->headers = isset($message->headers["Via"]) ? $message->headers : array_merge(["Via" => "RabbitMQ"], $message->headers);
+		if (!isset($message->headers["Via"])) $message->headers["Via"] = "RabbitMQ";
 		$message->headers["Content"] = $message->content;
+		$this->logger->log("Received message " . trim(substr(print_r($message->headers, true), 6)));
+		if (isset($message->headers["die"]) && $message->headers["die"]) {
+			$channel->ack($message);
+			$this->logger->log("Received die message... D: goodbye cruel world.");
+			$this->disconnect();
+			$this->logger->log($this->queue . " died.");
+			exit(0);
+		}
 		if (($this->callback)($message->headers)) return $channel->ack($message);
 		$channel->nack($message);
 	}
@@ -65,6 +73,11 @@ class RabbitMQ
 	}
 
 	public function __destruct()
+	{
+		$this->disconnect();
+	}
+
+	private function disconnect()
 	{
 		if (isset($this->channel)) {
 			$this->channel->cancel($this->consumerTag);
