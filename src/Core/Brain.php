@@ -22,7 +22,7 @@ class Brain extends SqlClient
     {
         parent::__construct($myName) or throw new FatalException("Failed to initialize SQL client");
         $this->loop = Loop::get() or throw new FatalException("Failed to initialize event loop");
-        $this->bunny = new RabbitMQ($this->getConfig("bunny"), $this->loop, $myName, $this->inbox(...), $this) or throw new FatalException("Failed to initialize RabbitMQ");
+        $this->bunny = new RabbitMQ($this->getConfig("bunny"), $this->loop, $this->inbox(...), $this) or throw new FatalException("Failed to initialize RabbitMQ");
         $this->ai = new OpenAI\Client($this) or throw new FatalException("Failed to initialize OpenAI client");
         $this->tokenCounter = new TokenCounter() or throw new FatalException("Failed to initialize TokenCounter");
         $this->alive = true;

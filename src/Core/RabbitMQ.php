@@ -16,11 +16,13 @@ class RabbitMQ
 	private ?Channel $channel = null;
 	private string $consumerTag;
 	private $callback;
+	private string $queue = 'invalid_queue';
 
-	public function __construct(array $options, LoopInterface $loop, private string $queue, $callback, private Logger $brain)
+	public function __construct(array $options, LoopInterface $loop, $callback, private Logger $brain)
 	{
+		$this->queue = $this->brain->myName;
 		if ($options['host'] == 'invalid') throw new FatalException('Failed to connect to the server');
-		if ($queue == 'invalid_queue') throw new FatalException('Failed to declare queue');
+		if ($this->queue == 'invalid_queue') throw new FatalException('Failed to declare queue');
 		$this->callback = $callback;
 		$this->consumerTag = bin2hex(random_bytes(8));
 		$this->client = Async\await((new Client($loop, $options))->connect());
