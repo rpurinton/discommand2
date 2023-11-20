@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use RPurinton\Discommand2\OpenAI\PromptBuilder;
+use RPurinton\Discommand2\Core\Brain;
 
 class PromptBuilderTest extends TestCase
 {
