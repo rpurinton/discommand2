@@ -10,7 +10,7 @@ class SqlClientTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->sqlClient = new SqlClient("valid-brain-name");
+        $this->sqlClient = new SqlClient("testBrain");
     }
 
     protected function tearDown(): void
