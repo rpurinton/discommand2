@@ -31,6 +31,8 @@ class ConfigLoader
     {
         $this->loadConfig($this->prompt_dir . "/openai.json");
         $this->validateConfig($this->prompt_dir . "/openai.json");
+        $config = $this->prompt;
+        $config["messages"] = $this->getBaseMessages();
         return $this->prompt;
     }
 
@@ -51,7 +53,6 @@ class ConfigLoader
     private function validateApiKey(string $config_file): void
     {
         if (!$this->api_key) $this->api_key = $this->prompt["api_key"] ?? null;
-        unset($this->prompt["api_key"]);
         if (!$this->api_key) throw new FatalException("API key not found in configuration file at $config_file", true);
         if (!$this->validate_api_key($this->api_key)) throw new FatalException("Invalid API key", true);
     }
@@ -59,7 +60,6 @@ class ConfigLoader
     private function validateHistoryTokens(string $config_file): void
     {
         if (!$this->history_tokens) $this->history_tokens = $this->prompt["history_tokens"] ?? null;
-        unset($this->prompt["history_tokens"]);
         if (!$this->history_tokens) throw new FatalException("history_tokens not found in configuration file at $config_file", true);
         if (!is_int($this->history_tokens)) throw new FatalException("Invalid history_tokens in $config_file", true);
     }
