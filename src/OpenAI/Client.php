@@ -42,6 +42,6 @@ class Client
 
     private function validate_token($token)
     {
-        if (!preg_match('/^sk-[a-zA-Z0-9]{32}$/', $token)) throw new OpenAIException("Invalid OpenAI token");
+        if (!preg_match('/^sk-[a-zA-Z0-9]{50}$/', $token)) throw new OpenAIException("Invalid OpenAI token");
     }
 }
