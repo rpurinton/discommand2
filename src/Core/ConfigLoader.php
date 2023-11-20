@@ -11,7 +11,7 @@ class ConfigLoader
     protected $logger;
     protected $exceptionHandler;
 
-    public function __construct(protected $myName)
+    public function __construct(public $myName)
     {
         $this->exceptionHandler = new GlobalExceptionHandler($this->logger);
         if (!is_dir("/home/$myName")) throw new ConfigurationException("$myName has not been created. Please run 'newBrain.php $myName' first.");

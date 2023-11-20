@@ -5,12 +5,15 @@ namespace RPurinton\Discommand2\Core;
 use React\EventLoop\Loop;
 use React\EventLoop\LoopInterface;
 use RPurinton\Discommand2\Core\RabbitMQ;
+use RPurinton\Discommand2\Core\SqlClient;
+use RPurinton\Discommand2\OpenAI;
 use RPurinton\Discommand2\OpenAI\TokenCounter;
 
 class Brain extends SqlClient
 {
     private LoopInterface $loop;
     private RabbitMQ $bunny;
+    private OpenAI\Client $ai;
     private $modules = [];
     private $tokenCounter;
 
@@ -25,6 +28,7 @@ class Brain extends SqlClient
             $this->tokenCounter = new TokenCounter();
             $this->loop = Loop::get();
             $this->bunny = new RabbitMQ($this->getConfig("bunny"), $this->loop, $myName, $this->inbox(...), $this->logger);
+            $this->ai = new OpenAI\Client($this);
         } catch (\Throwable $e) {
             // Handle other exceptions
             throw $e;
