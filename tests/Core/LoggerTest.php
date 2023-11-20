@@ -11,7 +11,7 @@ class LoggerTest extends TestCase
     {
         $this->assertInstanceOf(
             Logger::class,
-            new Logger('test')
+            new Logger('testBrain')
         );
     }
 }

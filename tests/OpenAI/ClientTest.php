@@ -13,6 +13,8 @@ class ClientTest extends TestCase
     protected function setUp(): void
     {
         $this->brain = $this->createMock(Brain::class);
+        $this->brain->myName = 'testBrain';
+        $this->brain->method('log')->willReturn(true);
     }
 
     public function testCanBeCreated(): void

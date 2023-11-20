@@ -11,7 +11,7 @@ class SqlClientTest extends TestCase
     {
         $this->assertInstanceOf(
             SqlClient::class,
-            new SqlClient('test')
+            new SqlClient('testBrain')
         );
     }
 }

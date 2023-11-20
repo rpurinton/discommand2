@@ -11,7 +11,7 @@ class BrainTest extends TestCase
     {
         $this->assertInstanceOf(
             Brain::class,
-            new Brain('test')
+            new Brain('testBrain')
         );
     }
 }

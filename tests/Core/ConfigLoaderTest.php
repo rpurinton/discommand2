@@ -11,7 +11,7 @@ class ConfigLoaderTest extends TestCase
     {
         $this->assertInstanceOf(
             ConfigLoader::class,
-            new ConfigLoader('test')
+            new ConfigLoader('testBrain')
         );
     }
 }
