@@ -59,13 +59,22 @@ class Logger
             exec("echo $log_message | systemd-cat -p $syslogPriority -t discommand2") or throw new FatalException("Failed to write to syslog");
             return true;
         } catch (\Throwable $e) {
-            echo "An error occurred while logging: " . $e->getMessage();
+            echo $e->getMessage() . "\n";
             exit(1);
         }
     }
+
     public function handleException(\Throwable $exception): void
     {
-        $this->log($exception->getMessage(), "ERROR") or throw new FatalException("Failed to log");
-        if ($exception instanceof FatalException) exit(1);
+        try {
+            $this->log($exception->getMessage(), "ERROR") or throw new FatalException("Failed to log");
+        } catch (FatalException $e) {
+            echo ($e->getMessage() . "\n");
+        } finally {
+            if ($exception instanceof FatalException) {
+                echo ("I'm sorry to inform you but {$this->myName} had a fatal error and has passed away. D:\n");
+                exit(1);
+            }
+        }
     }
 }
