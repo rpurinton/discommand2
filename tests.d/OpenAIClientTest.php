@@ -5,6 +5,12 @@ use RPurinton\Discommand2\OpenAI\Client;
 use RPurinton\Discommand2\Core\Brain;
 use RPurinton\Discommand2\Exceptions\ConfigurationException;
 use RPurinton\Discommand2\Exceptions\OpenAIException;
+use RPurinton\Discommand2\OpenAI\PromptBuilder;
+use RPurinton\Discommand2\OpenAI\StreamHandler;
+use RPurinton\Discommand2\OpenAI\FunctionLoader;
+use RPurinton\Discommand2\OpenAI\FunctionHandler;
+use RPurinton\Discommand2\OpenAI\TokenCounter;
+
 
 class OpenAIClientTest extends TestCase
 {
