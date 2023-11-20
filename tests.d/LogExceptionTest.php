@@ -9,8 +9,6 @@ class LogExceptionTest extends TestCase
     public function testLogException()
     {
         $this->expectException(LogException::class);
-        $logger = new Logger('/invalid/log/dir');
-        // Intentionally trigger a LogException
-        $logger->log('Test message that should not be logged');
+        $logger = new Logger('invalidBrain');
     }
 }

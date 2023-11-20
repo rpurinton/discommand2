@@ -12,13 +12,10 @@ class Logger
 
     public function __construct(public string $myName)
     {
-        $log_dir = "/home/$myName/logs.d";
+        if (!is_dir("/home/$myName")) throw new LogException("Invalid Brain name: $myName");
         $this->boot_microtime = microtime(true);
         $this->last_microttime = microtime(true);
-        // Simulate a failure condition for testing purposes
-        if ($log_dir === '/root/invalid/log/dir') {
-            throw new LogException("Simulated failure: Log directory is invalid for testing purposes.");
-        }
+        $log_dir = "/home/$myName/logs.d";
         $this->log_dir = realpath($log_dir) ?: $log_dir;
         if (!is_dir($this->log_dir) && !mkdir($this->log_dir, 0777, true)) {
             throw new LogException("Failed to create log directory: {$this->log_dir}");
