@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=0);
+declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use RPurinton\Discommand2\Core\RabbitMQ;
