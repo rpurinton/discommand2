@@ -42,7 +42,6 @@ class Client
 
     private function validate_token($token)
     {
-        // token must look like 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
         if (!preg_match('/^sk-[a-zA-Z0-9]{32}$/', $token)) throw new OpenAIException("Invalid OpenAI token");
     }
 }
