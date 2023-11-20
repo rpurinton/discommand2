@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=0);
+
 use PHPUnit\Framework\TestCase;
 use RPurinton\Discommand2\Core\RabbitMQ;
 use RPurinton\Discommand2\Core\Logger;
