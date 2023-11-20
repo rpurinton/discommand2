@@ -20,9 +20,6 @@ class Brain extends SqlClient
 
     public function __construct(string $myName)
     {
-        ini_set('display_errors', 1);
-        ini_set('display_startup_errors', 1);
-        error_reporting(E_ALL);
         parent::__construct($myName) or throw new FatalException("Failed to initialize SQL client");
         $this->loop = Loop::get() or throw new FatalException("Failed to initialize event loop");
         $this->bunny = new RabbitMQ($this->getConfig("bunny"), $this->loop, $myName, $this->inbox(...), $this) or throw new FatalException("Failed to initialize RabbitMQ");
