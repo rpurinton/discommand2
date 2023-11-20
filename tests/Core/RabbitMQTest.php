@@ -21,7 +21,7 @@ class RabbitMQTest extends TestCase
         $options = ['host' => 'invalid'];
         $loop = Loop::get();
         $logger = new Logger('testBrain');
-        $rabbitmq = new RabbitMQ($options, $loop, function ($message) {
+        new RabbitMQ($options, $loop, function ($message) {
         }, $logger);
     }
 
@@ -32,8 +32,9 @@ class RabbitMQTest extends TestCase
 
         $options = ['host' => 'valid'];
         $loop = Loop::get();
-        $logger = new Logger('invalid_queue');
-        $rabbitmq = new RabbitMQ($options, $loop, function ($message) {
+        $logger = new Logger('testBrain');
+        $logger->myName = 'invalid_queue';
+        new RabbitMQ($options, $loop, function ($message) {
         }, $logger);
     }
 
@@ -49,7 +50,7 @@ class RabbitMQTest extends TestCase
         $options = ['host' => 'valid'];
         $loop = Loop::get();
         $logger = new Logger('testBrain');
-        $rabbitmq = new RabbitMQ($options, $loop, function ($message) {
+        new RabbitMQ($options, $loop, function ($message) {
         }, $logger, $clientMock);
     }
 
@@ -65,7 +66,7 @@ class RabbitMQTest extends TestCase
         $options = ['host' => 'valid'];
         $loop = Loop::get();
         $logger = new Logger('testBrain');
-        $rabbitmq = new RabbitMQ($options, $loop, function ($message) {
+        new RabbitMQ($options, $loop, function ($message) {
         }, $logger, $clientMock);
     }
 
