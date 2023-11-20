@@ -24,7 +24,7 @@ class Logger
         $this->log("Logger initialized");
     }
 
-    public function log($message, $level = 'INFO')
+    public function log($message, $level = 'INFO'): bool
     {
         $microtime = microtime(true);
 
@@ -58,5 +58,6 @@ class Logger
         echo $log_message;
         $log_message = escapeshellarg($log_message);
         exec("echo $log_message | systemd-cat -p $syslogPriority -t discommand2");
+        return true;
     }
 }
