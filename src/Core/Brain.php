@@ -40,8 +40,8 @@ class Brain extends SqlClient
 
     public function __destruct()
     {
-        $this->bunny->disconnect();
-        $this->loop->stop();
+        if ($this->bunny) $this->bunny->disconnect();
+        if ($this->loop) $this->loop->stop();
         parent::__destruct();
     }
 
