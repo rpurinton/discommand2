@@ -14,13 +14,13 @@ class OpenAIClientTest extends TestCase
     protected function setUp(): void
     {
         $this->brain = $this->createMock(Brain::class);
-        $this->brain->method('myName')->willReturn('testBrain');
+        $this->brain->myName = 'testBrain';
     }
 
     public function testConstructWithInvalidConfigPath()
     {
         $this->expectException(ConfigurationException::class);
-        $this->brain->method('myName')->willReturn('invalidBrain');
+        $this->brain->myName = 'invalidBrain';
         $this->client = new Client($this->brain);
     }
 
@@ -28,14 +28,14 @@ class OpenAIClientTest extends TestCase
     {
         $this->expectException(OpenAIException::class);
         $this->brain = $this->createMock(Brain::class);
-        $this->brain->method('myName')->willReturn('testBrain');
+        $this->brain->myName = 'testBrain';
         $this->client = new Client($this->brain, 'invalid-token');
     }
 
     public function testConstructWithValidToken()
     {
         $this->brain = $this->createMock(Brain::class);
-        $this->brain->method('myName')->willReturn('testBrain');
+        $this->brain->myName = 'testBrain';
         $this->client = new Client($this->brain);
         $this->assertInstanceOf(Client::class, $this->client);
     }
