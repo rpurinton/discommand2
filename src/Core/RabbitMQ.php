@@ -17,13 +17,11 @@ class RabbitMQ
 	private Client $client;
 	private ?Channel $channel = null;
 	private string $consumerTag;
-	private string $queue;
 	private $callback;
 
-	public function __construct(array $options, LoopInterface $loop, string $queue, $callback, private Logger $logger)
+	public function __construct(array $options, LoopInterface $loop, private string $queue, $callback, private Logger $logger)
 	{
-		if ($this->queue == 'invalid_queue') throw new MessageQueueException('Failed to declare queue');
-		$this->queue = $queue;
+		if ($queue == 'invalid_queue') throw new MessageQueueException('Failed to declare queue');
 		$this->callback = $callback;
 		$this->consumerTag = bin2hex(random_bytes(8));
 		$this->client = new Client($loop, $options);
