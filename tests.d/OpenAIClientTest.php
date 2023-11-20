@@ -21,6 +21,7 @@ class OpenAIClientTest extends TestCase
     {
         $this->brain = $this->createMock(Brain::class);
         $this->brain->myName = 'testBrain';
+        $this->client = new Client($this->brain);
     }
 
     public function testConstructWithInvalidConfigPath()
