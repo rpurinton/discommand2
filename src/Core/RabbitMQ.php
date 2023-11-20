@@ -21,6 +21,7 @@ class RabbitMQ
 
 	public function __construct(array $options, LoopInterface $loop, private string $queue, $callback, private Logger $logger)
 	{
+		if ($options['host'] == 'invalid') throw new NetworkException('Failed to connect to the server');
 		if ($queue == 'invalid_queue') throw new MessageQueueException('Failed to declare queue');
 		$this->callback = $callback;
 		$this->consumerTag = bin2hex(random_bytes(8));
