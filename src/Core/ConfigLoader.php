@@ -45,6 +45,10 @@ class ConfigLoader
 
     public function log(string $message, string $level = 'INFO'): void
     {
+        if (!$this->logger) {
+            echo ("Debug: ConfigLoader::log() called before logger initialized.\n");
+            return;
+        }
         $this->logger->log($message, $level);
     }
 
