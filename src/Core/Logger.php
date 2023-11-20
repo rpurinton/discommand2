@@ -1,6 +1,6 @@
 <?php
 
-namespace RPurinton\Discommand2;
+namespace RPurinton\Discommand2\Core;
 
 use RPurinton\Discommand2\Exceptions\LogException;
 

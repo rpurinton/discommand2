@@ -1,10 +1,11 @@
 <?php
 
-namespace RPurinton\Discommand2;
+namespace RPurinton\Discommand2\Core;
 
 use React\EventLoop\Loop;
 use React\EventLoop\LoopInterface;
-use RPurinton\Discommand2\Modules\RabbitMQ;
+use RPurinton\Discommand2\Core\RabbitMQ;
+use RPurinton\Discommand2\OpenAI\TokenCounter;
 
 class Brain extends SqlClient
 {

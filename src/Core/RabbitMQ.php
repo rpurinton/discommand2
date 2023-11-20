@@ -1,6 +1,6 @@
 <?php
 
-namespace RPurinton\Discommand2\Modules;
+namespace RPurinton\Discommand2\Core;
 
 use React\Async;
 use React\EventLoop\LoopInterface;
@@ -10,8 +10,7 @@ use Bunny\Message;
 use Bunny\Exception\ClientException;
 use RPurinton\Discommand2\Exceptions\MessageQueueException;
 use RPurinton\Discommand2\Exceptions\NetworkException;
-use RPurinton\Discommand2\ConfigLoader;
-use RPurinton\Discommand2\Logger;
+use RPurinton\Discommand2\Core\Logger;
 
 class RabbitMQ
 {
