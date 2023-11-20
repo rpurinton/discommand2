@@ -11,11 +11,10 @@ use RPurinton\Discommand2\OpenAI\TokenCounter;
 
 class Brain extends SqlClient
 {
-    private LoopInterface $loop;
-    private RabbitMQ $bunny;
-    private OpenAI\Client $ai;
-    private $modules = [];
-    private $tokenCounter;
+    private ?LoopInterface $loop = null;
+    private ?RabbitMQ $bunny = null;
+    private ?OpenAI\Client $ai = null;
+    private ?TokenCounter $tokenCounter = null;
 
     public function __construct($myName)
     {
@@ -25,10 +24,10 @@ class Brain extends SqlClient
             ini_set('display_errors', 1);
             ini_set('display_startup_errors', 1);
             error_reporting(E_ALL);
-            $this->tokenCounter = new TokenCounter();
             $this->loop = Loop::get();
             $this->bunny = new RabbitMQ($this->getConfig("bunny"), $this->loop, $myName, $this->inbox(...), $this->logger);
             $this->ai = new OpenAI\Client($this);
+            $this->tokenCounter = new TokenCounter();
             $this->log("$myName is alive.");
         } catch (\Throwable $e) {
             // Handle other exceptions
