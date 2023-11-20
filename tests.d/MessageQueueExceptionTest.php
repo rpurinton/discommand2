@@ -14,7 +14,7 @@ class MessageQueueExceptionTest extends TestCase
         $this->expectException(MessageQueueException::class);
         $loop = $this->createMock(LoopInterface::class);
         $config = new ConfigLoader('testBrain');
-        $rabbitmq = new RabbitMQ($config->getConfig("bunny"), $loop, 'testBrain', function () {
+        $rabbitmq = new RabbitMQ($config->getConfig("bunny"), $loop, 'invalid_queue', function () {
             // Do nothing
         }, $config->getLogger());
     }
