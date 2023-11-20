@@ -49,7 +49,7 @@ class RabbitMQ
 	private function process(Message $message, Channel $channel, Client $client)
 	{
 		unset($message->headers["delivery-mode"]);
-		$message->headers = array_merge(["Via" => "RabbitMQ"], $message->headers);
+		$message->headers = isset($message->headers["Via"]) ? $message->headers : array_merge(["Via" => "RabbitMQ"], $message->headers);
 		$message->headers["Content"] = $message->content;
 		if (($this->callback)($message->headers)) return $channel->ack($message);
 		$channel->nack($message);
