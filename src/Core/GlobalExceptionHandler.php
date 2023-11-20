@@ -12,8 +12,11 @@ class GlobalExceptionHandler
 
     public function handleException(\Throwable $exception): void
     {
-        if ($this->logger && !$this->logger->log($exception->getMessage(), 'ERROR')) {
-            echo ("Debug: GlobalExceptionHandler::handleException() failed to log exception " . get_class($exception) . " deatils: " . $exception->getMessage() . "\n");
+        if (!$this->logger) {
+            echo ("Logging exception " . get_class($exception) . " details: " . $exception->getMessage() . "\n");
+            die();
+        } else {
+            !$this->logger->log($exception->getMessage(), 'ERROR');
         }
     }
 }
