@@ -40,6 +40,6 @@ class PromptBuilder
 
     private function validate_api_key($api_key)
     {
-        return (substr($api_key, 0, 3) !== 'sk-' || strlen($api_key) !== 51);
+        return (substr($api_key, 0, 3) === 'sk-' && strlen($api_key) === 51);
     }
 }
