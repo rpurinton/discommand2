@@ -13,7 +13,7 @@ class PromptBuilder
     public $tokenCounter;
     public $prompt;
 
-    public function __construct(private Brain $brain, public string $api_key = null, public int $history_tokens = null)
+    public function __construct(private Brain $brain, public ?string $api_key = null, public ?int $history_tokens = null)
     {
         $this->functionLoader = new FunctionLoader($brain);
         $this->functionHandler = new FunctionHandler($brain);
