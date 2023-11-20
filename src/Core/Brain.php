@@ -34,7 +34,6 @@ class Brain extends SqlClient
     {
         if ($this->bunny) $this->bunny->disconnect();
         if ($this->loop) $this->loop->stop();
-        parent::__destruct();
     }
 
     private function inbox(array $message): bool
