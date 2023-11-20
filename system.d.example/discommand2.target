@@ -1,0 +1,11 @@
+[Unit]
+Description=Discommand2 Target
+Wants=discommand-brain@Lily.service
+Wants=discommand-brain@Adam.service
+Wants=discommand-brain@Oliver.service
+Wants=discommand-brain@Derek.service
+After=network.target
+
+[Install]
+WantedBy=multi-user.target
+

@@ -1,0 +1,16 @@
+[Unit]
+Description=Discommand Brain Service for %i
+PartOf=discommand2.target
+After=network.target
+
+[Service]
+Type=simple
+User=%i
+Group=%i
+ExecStart=/var/www/discommand2/runBrain.php %i
+#ExecStartPost=/var/www/discommand2/sendCrashAlert.php %i
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=discommand2.target
