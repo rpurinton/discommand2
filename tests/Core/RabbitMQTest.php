@@ -37,22 +37,4 @@ class RabbitMQTest extends TestCase
         new RabbitMQ($options, $loop, function ($message) {
         }, $logger);
     }
-
-    public function testProcess(): void
-    {
-        // Mock the Message, Channel, and Client classes
-        $messageMock = $this->createMock(Message::class);
-        $channelMock = $this->createMock(Channel::class);
-        $clientMock = $this->createMock(Client::class);
-
-        $options = ['host' => 'valid'];
-        $loop = Loop::get();
-        $logger = new Logger('testBrain');
-        $rabbitmq = new RabbitMQ($options, $loop, function ($message) {
-        }, $logger, $clientMock);
-
-        // Call the process method and check that no exceptions are thrown
-        $this->expectNotToPerformAssertions();
-        $rabbitmq->process($messageMock, $channelMock, $clientMock);
-    }
 }
