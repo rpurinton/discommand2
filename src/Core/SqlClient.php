@@ -11,30 +11,43 @@ class SqlClient extends ConfigLoader
     public function __construct($myName)
     {
         parent::__construct($myName);
-        if (!$this->connect()) {
-            throw new SqlException("Failed to connect to MySQL.");
-        }
+        $this->connect();
     }
 
     public function __destruct()
     {
-        if ($this->sql) mysqli_close($this->sql);
+        if ($this->sql) {
+            mysqli_close($this->sql);
+        }
     }
 
-    private function connect(): bool
+    private function connect()
     {
-        $this->sql = mysqli_connect($this->config["sql"]["host"], $this->myName, $this->myName, $this->myName);
+        $this->sql = mysqli_connect(
+            $this->config["sql"]["host"],
+            $this->myName,
+            $this->myName,
+            $this->myName
+        );
+
         if (!$this->sql) {
             $this->log("Failed to connect to MySQL: " . mysqli_connect_error(), "ERROR");
-            return false;
+            throw new SqlException("Failed to connect to MySQL: " . mysqli_connect_error());
         }
-        $this->log("SqlClient initialized");
-        return true;
+
+        $this->log("SqlClient connected");
     }
+
     public function query($query)
     {
-        if (!mysqli_ping($this->sql)) $this->connect();
-        return mysqli_query($this->sql, $query);
+        $this->reconnectIfNeeded();
+        $result = mysqli_query($this->sql, $query);
+
+        if (!$result) {
+            throw new SqlException('MySQL query error: ' . mysqli_error($this->sql));
+        }
+
+        return $result;
     }
 
     public function count($result)
@@ -44,10 +57,7 @@ class SqlClient extends ConfigLoader
 
     public function insert($query)
     {
-        $result = $this->query($query);
-        if (!$result) {
-            throw new \Exception('MySQL insert error: ' . \mysqli_error($this->sql));
-        }
+        $this->query($query);
         return $this->insert_id();
     }
 
@@ -63,14 +73,23 @@ class SqlClient extends ConfigLoader
 
     public function single($query)
     {
-        if (!mysqli_ping($this->sql)) $this->connect();
-        return mysqli_fetch_assoc(mysqli_query($this->sql, $query));
+        $this->reconnectIfNeeded();
+        $result = mysqli_query($this->sql, $query);
+
+        if (!$result) {
+            throw new SqlException('MySQL query error: ' . mysqli_error($this->sql));
+        }
+
+        return mysqli_fetch_assoc($result);
     }
 
     public function multi($query): array
     {
-        if (!mysqli_ping($this->sql)) $this->connect();
-        mysqli_multi_query($this->sql, $query);
+        $this->reconnectIfNeeded();
+        if (!mysqli_multi_query($this->sql, $query)) {
+            throw new SqlException('MySQL multi-query error: ' . mysqli_error($this->sql));
+        }
+
         $result = [];
         do {
             if ($res = mysqli_store_result($this->sql)) {
@@ -78,43 +97,19 @@ class SqlClient extends ConfigLoader
                 mysqli_free_result($res);
             }
         } while (mysqli_more_results($this->sql) && mysqli_next_result($this->sql));
+
         return $result;
     }
 
     public function insert_id()
     {
-        return \mysqli_insert_id($this->sql);
+        return mysqli_insert_id($this->sql);
     }
 
-    public function query_function($query, $db_name = null)
+    private function reconnectIfNeeded()
     {
-        try {
-            // select the database to query
-            if (!empty($db_name)) {
-                \mysqli_select_db($this->sql, $db_name);
-            }
-            $result = $this->multi($query);
-            if (!count($result)) {
-                throw new \Exception('MySQL query error: ' . \mysqli_error($this->sql));
-            }
-            // return an array with success true and a string of the results in csv format with headers and finally a total number of rows returned
-            $csv = "";
-            foreach ($result as $key => $value) {
-                $csv .= implode(",", array_keys($value[0])) . "\n";
-                foreach ($value as $key2 => $value2) {
-                    $csv .= implode(",", $value2) . "\n";
-                }
-            }
-            return ["success" => true, "csv" => $csv];
-        } catch (\Exception $e) {
-            return ["success" => false, "error" => $e->getMessage()];
-        } catch (\Error $e) {
-            return ["success" => false, "error" => $e->getMessage()];
-        } catch (\Throwable $e) {
-            return ["success" => false, "error" => $e->getMessage()];
-        } finally {
-            // select the original database
-            \mysqli_select_db($this->sql, $this->config["sql"]["db"]);
+        if (!mysqli_ping($this->sql)) {
+            $this->connect();
         }
     }
 }
