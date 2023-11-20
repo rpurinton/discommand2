@@ -55,7 +55,6 @@ class Brain extends SqlClient
             // Handle other exceptions
             throw $e;
         } finally {
-            // Always acknowledge the message
             return true;
         }
     }
