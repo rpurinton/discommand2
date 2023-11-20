@@ -15,7 +15,7 @@ class LoggerTest extends TestCase
 
     public function testLogMessage(): void
     {
-        $logger = new Logger('/tmp');
+        $logger = new Logger('testBrain');
         $logMessage = 'Test log message';
         $logger->log($logMessage, 'INFO');
         $logFile = $logger->log_dir . '/' . date('Y-m-d') . '.log';
