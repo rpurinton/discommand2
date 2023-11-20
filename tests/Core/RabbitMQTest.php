@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 use PHPUnit\Framework\TestCase;
 use RPurinton\Discommand2\Core\RabbitMQ;
 use RPurinton\Discommand2\Core\Logger;
@@ -13,8 +11,8 @@ class RabbitMQTest extends TestCase
     {
         $options = json_decode(file_get_contents(__DIR__ . '/../../configs/bunny.json'), true);
         $loop = Loop::get();
-        $callback = function ($message) {
-            return true;
+        $callback = function ($msg) {
+            // do nothing
         };
         $logger = new Logger('testBrain');
         $this->assertInstanceOf(
