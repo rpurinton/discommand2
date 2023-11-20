@@ -57,7 +57,8 @@ class Logger
             };
             echo $log_message;
             $log_message = escapeshellarg($log_message);
-            exec("echo $log_message | systemd-cat -p $syslogPriority -t discommand2") or throw new FatalException("Failed to write to syslog");
+            exec("echo $log_message | systemd-cat -p $syslogPriority -t discommand2", $output, $exitCode);
+            if ($exitCode) throw new FatalException("Failed to write to syslog");
             return true;
         } catch (\Throwable $e) {
             echo $e->getMessage() . "\n";
