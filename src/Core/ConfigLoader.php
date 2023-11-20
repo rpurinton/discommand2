@@ -13,9 +13,8 @@ class ConfigLoader
 
     public function __construct(public $myName)
     {
-        $this->exceptionHandler = new GlobalExceptionHandler($this->logger);
-        if (!is_dir("/home/$myName")) throw new ConfigurationException("$myName has not been created. Please run 'newBrain.php $myName' first.");
         $this->logger = new Logger($myName);
+        $this->exceptionHandler = new GlobalExceptionHandler($this->logger);
         foreach (glob(__DIR__ . "/../../conf.d/*.json") as $configFile) $this->config[basename($configFile, '.json')] = json_decode(file_get_contents($configFile), true);
         $this->log("ConfigLoader initialized");
         return $this;

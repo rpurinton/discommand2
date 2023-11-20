@@ -3,6 +3,7 @@
 namespace RPurinton\Discommand2\Core;
 
 use RPurinton\Discommand2\Exceptions\LogException;
+use RPurinton\Discommand2\Exceptions\ConfigurationException;
 
 class Logger
 {
@@ -12,7 +13,7 @@ class Logger
 
     public function __construct(public string $myName)
     {
-        if (!is_dir("/home/$myName")) throw new LogException("Invalid Brain name: $myName");
+        if (!is_dir("/home/$myName")) throw new ConfigurationException("$myName has not been created. Please run 'newBrain.php $myName' first.");
         $this->boot_microtime = microtime(true);
         $this->last_microttime = microtime(true);
         $log_dir = "/home/$myName/logs.d";

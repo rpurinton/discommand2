@@ -9,7 +9,7 @@ class LoggerTest extends TestCase
 {
     public function testLogCreation(): void
     {
-        $logger = new Logger('/tmp');
+        $logger = new Logger('testBrain');
         $this->assertInstanceOf(Logger::class, $logger);
     }
 
@@ -18,7 +18,7 @@ class LoggerTest extends TestCase
         $logger = new Logger('testBrain');
         $logMessage = 'Test log message';
         $logger->log($logMessage, 'INFO');
-        $logFile = $logger->log_dir . '/' . date('Y-m-d') . '.log';
+        $logFile = "/home/testBrain/logs.d/" . date('Y-m-d') . '.log';
         $this->assertFileExists($logFile);
         $this->assertStringContainsString($logMessage, file_get_contents($logFile));
         unlink($logFile);
