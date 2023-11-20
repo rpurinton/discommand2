@@ -2,6 +2,6 @@
 
 namespace RPurinton\Discommand2\OpenAI;
 
-class PrompBuilder
+class PromptBuilder
 {
 }
