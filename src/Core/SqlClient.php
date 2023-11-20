@@ -49,6 +49,10 @@ class SqlClient extends ConfigLoader
             }
         } catch (\Exception $e) {
             throw new SqlException($e->getMessage());
+        } catch (\Throwable $e) {
+            throw new SqlException($e->getMessage());
+        } catch (\Error $e) {
+            throw new SqlException($e->getMessage());
         } finally {
             return $result;
         }
