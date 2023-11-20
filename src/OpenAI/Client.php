@@ -9,6 +9,7 @@ use RPurinton\Discommand2\OpenAI\FunctionHandler;
 use RPurinton\Discommand2\OpenAI\TokenCounter;
 use RPurinton\Discommand2\Core\Brain;
 use Rpurinton\Discommand2\Exceptions\OpenAIException;
+use RPurinton\Discommand2\Exceptions\ConfigurationException;
 
 
 class Client
@@ -21,7 +22,7 @@ class Client
     private $client;
     private $prompt;
 
-    public function __construct(private Brain $brain)
+    public function __construct(private Brain $brain, $token = null)
     {
         $this->promptBuilder = new PromptBuilder();
         $this->streamHandler = new StreamHandler();
@@ -29,11 +30,12 @@ class Client
         $this->functionHandler = new FunctionHandler();
         $this->tokenCounter = new TokenCounter();
         $config_file = "/home/" . $brain->myName . "/prompt.d/openai.json";
-        if (!file_exists($config_file)) throw new OpenAIException("OpenAI configuration file not found.");
+        if (!file_exists($config_file)) throw new ConfigurationException("OpenAI configuration file not found at $config_file");
         $this->prompt = json_decode(file_get_contents($config_file), true);
-        $token = $this->prompt["token"];
+        if (!$token) $token = $this->prompt["token"];
         unset($this->prompt["token"]);
         $this->client = \OpenAI::client($token);
+        if (!$this->client) throw new OpenAIException("Failed to initialize OpenAI client");
         $brain->log("OpenAI initialized");
     }
 }
