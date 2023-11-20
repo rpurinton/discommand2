@@ -23,6 +23,8 @@ class RabbitMQTest extends TestCase
             return true;
         };
         $mock_logger = $this->createMock(Logger::class);
+        $mock_logger->myName = 'testBrain';
+        $mock_logger->method('log')->willReturn(true);
         $this->assertInstanceOf(
             RabbitMQ::class,
             new RabbitMQ($mock_options, $mock_loop, 'testBrain', $mock_callback, $mock_logger)
