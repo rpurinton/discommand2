@@ -40,14 +40,18 @@ class SqlClient extends ConfigLoader
 
     public function query($query)
     {
-        $this->reconnectIfNeeded();
-        $result = mysqli_query($this->sql, $query);
-
-        if (!$result) {
-            throw new SqlException('MySQL query error: ' . mysqli_error($this->sql));
+        $result = null;
+        try {
+            $this->reconnectIfNeeded();
+            $result = mysqli_query($this->sql, $query);
+            if (!$result) {
+                throw new SqlException('MySQL query error: ' . mysqli_error($this->sql));
+            }
+        } catch (\Exception $e) {
+            throw new SqlException($e->getMessage());
+        } finally {
+            return $result;
         }
-
-        return $result;
     }
 
     public function count($result)
