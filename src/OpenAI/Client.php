@@ -39,6 +39,7 @@ class Client
         $this->client = \OpenAI::client($token);
         if (!$this->client) throw new FatalException("Failed to initialize OpenAI client");
         $brain->log("OpenAI initialized");
+        return true;
     }
 
     private function validate_token($token)

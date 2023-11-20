@@ -31,6 +31,7 @@ class RabbitMQ
 		Async\await($this->channel->queueDeclare($this->queue));
 		$this->channel->consume($this->process(...), $this->queue, $this->consumerTag);
 		$this->brain->log("RabbitMQ initialized");
+		return true;
 	}
 
 	private function process(Message $message, Channel $channel, Client $client)

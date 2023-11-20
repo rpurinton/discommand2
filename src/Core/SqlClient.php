@@ -13,6 +13,7 @@ class SqlClient extends ConfigLoader
     {
         parent::__construct($myName);
         $this->connect();
+        return true;
     }
 
     public function __destruct()
