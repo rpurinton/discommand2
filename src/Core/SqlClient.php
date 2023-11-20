@@ -29,7 +29,7 @@ class SqlClient extends ConfigLoader
             throw new FatalException("Failed to connect to MySQL: " . $e->getMessage());
         }
 
-        $this->log("SqlClient connected");
+        $this->log("SqlClient connected.");
     }
 
     public function query($query)
