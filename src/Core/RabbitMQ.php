@@ -25,7 +25,7 @@ class RabbitMQ
 		$this->consumerTag = bin2hex(random_bytes(8));
 		$this->client = new Client($loop, $options);
 		if (!$this->client) throw new FatalException('Failed to establish the client');
-		Async\await($this->client->connect());
+		$this->client = Async\await($this->client->connect());
 		$this->channel = Async\await($this->client->channel());
 		if (!$this->channel) throw new FatalException('Failed to establish the channel');
 		Async\await($this->channel->qos(0, 1));
