@@ -1,31 +1,24 @@
-# Discommand2
+# Discommand 2.1
 
-Discommand2 is an advanced message processing system designed to handle asynchronous tasks with high efficiency and reliability. It leverages RabbitMQ for message queuing, MariaDB for data persistence, and PHP for the core application logic.
+Discommand 2.1 is the next iteration of the Discommand project, focusing on providing an AI-powered command and control system for Linux servers.
 
-## Features
+## Overview
 
-- Asynchronous message processing with RabbitMQ.
-- Robust logging system for easy debugging and monitoring.
-- Custom exception handling for granular error management.
-- Scalable architecture to handle increasing loads.
-- Comprehensive test suite for reliability.
-
-## Components
-
-- `Brain`: The central processing unit of the system, handling all message-related operations.
-- `BunnyConsumer`: A RabbitMQ consumer for processing queued messages.
-- `Logger`: A logging utility to record system events and errors.
-- `ConfigLoader`: A configuration manager to handle system settings.
-- `GlobalExceptionHandler`: An exception handler to manage unexpected errors.
+This project aims to simplify server management by using natural language processing to interpret commands and perform actions on the server. It leverages OpenAI's GPT models to understand and execute user requests.
 
 ## Getting Started
 
-Refer to the [docs.d](https://github.com/rpurinton/discommand2/tree/master/docs.d) directory for detailed documentation on setting up, configuring, and using Discommand2. The documentation includes a setup guide, usage instructions, technical references, testing information, troubleshooting tips, and contribution guidelines.
+Instructions on how to set up and run Discommand 2.1 will be provided here once the core functionality is implemented.
 
 ## Contributing
 
-Contributions are welcome! Please refer to the `docs.d/Contributing.md` for contribution guidelines.
+Contributions are welcome. Please read the CONTRIBUTING.md for details on our code of conduct, and the process for submitting pull requests to us.
 
 ## License
 
-Discommand2 is open-source software licensed under the MIT license. See the full license file at [LICENSE](https://github.com/rpurinton/discommand2/blob/master/LICENSE).
+This project is licensed under the MIT License - see the LICENSE.md file for details.
+
+## Acknowledgments
+
+- OpenAI for providing the GPT models.
+- The Linux community for the invaluable resources and support.
