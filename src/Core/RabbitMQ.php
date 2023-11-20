@@ -7,7 +7,7 @@ use React\EventLoop\LoopInterface;
 use Bunny\Async\Client;
 use Bunny\Channel;
 use Bunny\Message;
-use RPurinton\Discommand2\Core\Brain;
+use RPurinton\Discommand2\Core\Logger;
 use RPurinton\Discommand2\Exceptions\FatalException;
 
 class RabbitMQ
