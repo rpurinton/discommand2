@@ -17,9 +17,7 @@ class RabbitMQTest extends TestCase
             // do nothing
         };
         $logger = new Logger('testBrain');
-        $this->assertInstanceOf(
-            RabbitMQ::class,
-            new RabbitMQ($options, $loop, $callback, $logger)
-        );
+        $rabbitmq = new RabbitMQ($options, $loop, $callback, $logger);
+        $this->assertInstanceOf(RabbitMQ::class, $rabbitmq);
     }
 }
