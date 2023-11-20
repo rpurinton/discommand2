@@ -24,24 +24,13 @@ class RabbitMQ
 		if ($queue == 'invalid_queue') throw new MessageQueueException('Failed to declare queue');
 		$this->callback = $callback;
 		$this->consumerTag = bin2hex(random_bytes(8));
-		$this->client = new Client($loop, $options);
-		$this->client->connect()->then(
-			function (Client $client) {
-				return $client->channel();
-			},
-			function (\Throwable $e) {
-				if ($e instanceof ClientException) {
-					throw new NetworkException('Failed to connect to the server', 0, $e);
-				}
-			}
-		)->then(
-			function (Channel $channel) {
-				$this->channel = $channel;
-				$channel->qos(0, 1);
-				$channel->queueDeclare($this->queue);
-				return $channel->consume($this->process(...), $this->queue, $this->consumerTag);
-			}
-		);
+		$this->client = Async\await((new Client($loop, $options))->connect());
+		if (!$this->client) throw new NetworkException('Failed to connect to the server');
+		$this->channel = Async\await($this->client->channel());
+		if (!$this->channel) throw new NetworkException('Failed to establish the channel');
+		Async\await($this->channel->qos(0, 1));
+		Async\await($this->channel->queueDeclare($this->queue));
+		$this->channel->consume($this->process(...), $this->queue, $this->consumerTag);
 		$this->logger->log("RabbitMQ initialized");
 	}
 
