@@ -10,10 +10,14 @@ class RabbitMQTest extends TestCase
 {
     public function testCanBeCreated(): void
     {
+        $mock_callback = function ($message) {
+            return true;
+        };
+        $mock_brain = $this->createMock(Brain::class);
+        $mock_brain->myName = 'testBrain';
         $this->assertInstanceOf(
             RabbitMQ::class,
-            new RabbitMQ(['host' => 'localhost'], new React\EventLoop\StreamSelectLoop(), 'test_queue', function () {
-            }, new Brain('testBrain'))
+            new RabbitMQ(['host' => 'localhost'], new React\EventLoop\StreamSelectLoop(), 'test_queue', $mock_callback, $mock_brain)
         );
     }
 }
