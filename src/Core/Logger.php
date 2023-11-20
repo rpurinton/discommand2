@@ -24,7 +24,7 @@ class Logger
             }
             $this->log("Logger initialized");
         } catch (\Throwable $e) {
-            echo "An error occurred during logger setup: " . $e->getMessage();
+            echo $e->getMessage() . "\n";
             exit(1);
         }
     }
