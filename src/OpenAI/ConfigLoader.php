@@ -6,9 +6,9 @@ use RPurinton\Discommand2\Exceptions\FatalException;
 
 class ConfigLoader
 {
-    public $api_key;
-    public $history_tokens;
-    public $prompt;
+    public ?string $api_key = null;
+    public ?int $history_tokens = null;
+    public ?array $prompt = null;
 
     public function __construct(private string $prompt_dir)
     {

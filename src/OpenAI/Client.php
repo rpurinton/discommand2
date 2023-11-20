@@ -10,9 +10,9 @@ class Client
     public $requestHandler;
     private $client;
 
-    public function __construct(private Brain $brain, ?string $api_key = null, ?int $history_tokens = null)
+    public function __construct(private Brain $brain)
     {
-        $this->requestHandler = new RequestHandler($brain, $api_key, $history_tokens);
+        $this->requestHandler = new RequestHandler($brain);
         $this->client = \OpenAI::client($this->requestHandler->promptBuilder->api_key);
         if (!$this->client) throw new FatalException("Failed to initialize OpenAI client");
         $brain->log("OpenAI connected.");
