@@ -7,11 +7,20 @@ use RPurinton\Discommand2\OpenAI\PromptBuilder;
 
 class PromptBuilderTest extends TestCase
 {
+    private $brain;
+
+    protected function setUp(): void
+    {
+        $this->brain = $this->createMock(Brain::class);
+        $this->brain->myName = 'testBrain';
+        $this->brain->method('log')->willReturn(true);
+    }
+
     public function testCanBeCreated(): void
     {
         $this->assertInstanceOf(
             PromptBuilder::class,
-            new PromptBuilder()
+            new PromptBuilder($this->brain)
         );
     }
 }
