@@ -50,10 +50,8 @@ class Brain extends SqlClient
             $tokens = $this->tokenCounter->count($content);
             $message_id = $this->insert("INSERT INTO `messages` (`microtime`, `role`, `content`, `tokens`) VALUES ('$microtime', '$role', '$content', '$tokens')");
             // Do something with the message
-            return true;
-        } catch (\Throwable $e) {
-            // Handle other exceptions
-            throw $e;
+        } catch (\Exception $e) {
+            $this->log($e->getMessage(), "ERROR");
         } finally {
             return true;
         }
