@@ -15,7 +15,7 @@ class ConfigLoader
     {
         try {
             $this->exceptionHandler = new GlobalExceptionHandler($this->logger);
-            if (!is_dir("/home/$myName")) die("$myName has not been created. Please run 'newBrain.php $myName' first.\n");
+            if (!is_dir("/home/$myName")) throw new ConfigurationException("$myName has not been created. Please run 'newBrain.php $myName' first.");
             $this->logger = new Logger("/home/$myName/logs.d");
             foreach (glob(__DIR__ . "/../../conf.d/*.json") as $configFile) $this->config[basename($configFile, '.json')] = json_decode(file_get_contents($configFile), true);
         } catch (ConfigurationException $e) {
@@ -28,9 +28,24 @@ class ConfigLoader
         } catch (\Throwable $e) {
             throw $e;
         } finally {
-            $this->logger->log("ConfigLoader initialized");
+            $this->log("ConfigLoader initialized");
             return $this;
         }
+    }
+
+    public function getConfig(string $section): array
+    {
+        return $this->config[$section] ?? [];
+    }
+
+    public function getLogger(): Logger
+    {
+        return $this->logger;
+    }
+
+    public function log(string $message, string $level = 'INFO'): void
+    {
+        $this->logger->log($message, $level);
     }
 
     // Intentionally trigger a ConfigurationException

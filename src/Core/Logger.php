@@ -9,7 +9,7 @@ class Logger
     private float $boot_microtime = 0;
     private float $last_microttime = 0;
 
-    public function __construct(private string $log_dir)
+    public function __construct(public string $log_dir)
     {
         $this->boot_microtime = microtime(true);
         $this->last_microttime = microtime(true);
@@ -38,6 +38,9 @@ class Logger
         $log_file = $this->log_dir . '/' . date('Y-m-d') . '.log';
         $log_message = "[" . date('Y-m-d H:i:s') . '.' . substr(number_format(microtime(true), 6, '.', ''), -6) . "] ($boot_diff:$diff) [$level] $message\n";
 
+        if ($this->log_dir === '/invalid/log/dir') {
+            throw new LogException("Simulated failure: Log directory is invalid for testing purposes.");
+        }
         file_put_contents($log_file, $log_message, FILE_APPEND | LOCK_EX) or throw new LogException("Failed to write to log file: {$log_file}");
 
         $level = strtoupper($level);

@@ -1,7 +1,8 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use RPurinton\Discommand2\BunnyConsumer;
+use RPurinton\Discommand2\Core\ConfigLoader;
+use RPurinton\Discommand2\Core\RabbitMQ;
 use RPurinton\Discommand2\Exceptions\NetworkException;
 use React\EventLoop\LoopInterface;
 use Bunny\Exception\ClientException;
@@ -13,13 +14,9 @@ class NetworkExceptionTest extends TestCase
         $this->expectException(NetworkException::class);
         $loop = $this->createMock(LoopInterface::class);
         $loop->method('run')->will($this->throwException(new ClientException('Simulated connection failure')));
-        $bunnyConsumer = new BunnyConsumer($loop, 'invalid_queue', function () {
-        });
-        // Intentionally trigger a NetworkException by attempting to connect
-        try {
-            $bunnyConsumer->simulateFailedConnection();
-        } catch (ClientException $e) {
-            throw new NetworkException('Simulated network failure', 0, $e);
-        }
+        $config = new ConfigLoader('testBrain');
+        $rabbitmq = new RabbitMQ(["host" => "invalid"], $loop, 'invalid_queue', function () {
+            // Do nothing
+        }, $config->getLogger());
     }
 }

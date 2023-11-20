@@ -25,10 +25,10 @@ class SqlClient extends ConfigLoader
     {
         $this->sql = mysqli_connect($this->config["sql"]["host"], $this->myName, $this->myName, $this->myName);
         if (!$this->sql) {
-            $this->logger->log("Failed to connect to MySQL: " . mysqli_connect_error(), "ERROR");
+            $this->log("Failed to connect to MySQL: " . mysqli_connect_error(), "ERROR");
             return false;
         }
-        $this->logger->log("SqlClient initialized");
+        $this->log("SqlClient initialized");
         return true;
     }
     public function query($query)

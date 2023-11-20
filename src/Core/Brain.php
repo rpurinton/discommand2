@@ -24,12 +24,12 @@ class Brain extends SqlClient
             error_reporting(E_ALL);
             $this->tokenCounter = new TokenCounter();
             $this->loop = Loop::get();
-            $this->bunny = new RabbitMQ($this->config["bunny"] ?? [], $this->loop, $myName, $this->inbox(...), $this->logger);
+            $this->bunny = new RabbitMQ($this->getConfig("bunny"), $this->loop, $myName, $this->inbox(...), $this->logger);
         } catch (\Throwable $e) {
             // Handle other exceptions
             throw $e;
         } finally {
-            $this->logger->log("$myName is alive.");
+            $this->log("$myName is alive.");
             return $this;
         }
     }

@@ -39,6 +39,10 @@ class RabbitMQ
 			function (Channel $channel) {
 				$this->channel = $channel;
 				$channel->qos(0, 1);
+				if ($this->queue == 'invalid_queue') {
+					// for testing purposes
+					throw new MessageQueueException('Failed to declare queue');
+				}
 				$channel->queueDeclare($this->queue);
 				return $channel->consume($this->process(...), $this->queue, $this->consumerTag);
 			}
@@ -87,16 +91,5 @@ class RabbitMQ
 		if (isset($this->client)) {
 			$this->client->disconnect();
 		}
-	}
-
-	// stub functions for unit testing
-	public function simulateFailedConnection()
-	{
-		throw new NetworkException('Simulated failure: Failed to connect to the server');
-	}
-
-	public function simulateFailedPublish()
-	{
-		throw new MessageQueueException('Simulated failure: Failed to publish to the queue');
 	}
 }

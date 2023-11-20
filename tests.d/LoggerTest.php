@@ -3,23 +3,24 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-use RPurinton\Discommand2\Logger;
+use RPurinton\Discommand2\Core\Logger;
 
 class LoggerTest extends TestCase
 {
     public function testLogCreation(): void
     {
-        $logger = new Logger();
+        $logger = new Logger('/tmp');
         $this->assertInstanceOf(Logger::class, $logger);
     }
 
     public function testLogMessage(): void
     {
-        $logger = new Logger();
+        $logger = new Logger('/tmp');
         $logMessage = 'Test log message';
         $logger->log($logMessage, 'INFO');
-        $logFile = $logger->getLogDir() . '/' . date('Y-m-d') . '.log';
+        $logFile = $logger->log_dir . '/' . date('Y-m-d') . '.log';
         $this->assertFileExists($logFile);
         $this->assertStringContainsString($logMessage, file_get_contents($logFile));
+        unlink($logFile);
     }
 }
