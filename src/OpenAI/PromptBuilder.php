@@ -12,6 +12,7 @@ class PromptBuilder
     public $functionHandler;
     public $tokenCounter;
     public $prompt;
+    public $base_messages;
 
     public function __construct(private Brain $brain, public ?string $api_key = null, public ?int $history_tokens = null)
     {
@@ -19,50 +20,10 @@ class PromptBuilder
         $this->functionHandler = new FunctionHandler($brain);
         $this->tokenCounter = new TokenCounter($brain);
 
-        $config_file = "/home/" . $brain->myName . "/prompt.d/openai.json";
-        $this->loadAndValidateConfig($config_file);
+        $configLoader = new ConfigLoader("/home/" . $brain->myName . "/prompt.d");
+        $this->prompt = $configLoader->loadAndValidateConfig() or throw new FatalException("Failed to load and validate OpenAI configuration");
+        $this->base_messages = $configLoader->getBaseMessages() or throw new FatalException("Failed to get base messages");
 
         $this->brain->log("PromptBuilder initialized.");
-    }
-
-    private function loadAndValidateConfig(string $config_file): void
-    {
-        $this->loadConfig($config_file);
-        $this->validateConfig($config_file);
-    }
-
-    private function loadConfig(string $config_file): void
-    {
-        if (!file_exists($config_file)) throw new FatalException("Configuration file not found at $config_file", true);
-
-        $this->prompt = json_decode(file_get_contents($config_file), true);
-        if (!$this->prompt) throw new FatalException("Failed to parse OpenAI configuration file at $config_file", true);
-    }
-
-    private function validateConfig(string $config_file): void
-    {
-        $this->validateApiKey($config_file);
-        $this->validateHistoryTokens($config_file);
-    }
-
-    private function validateApiKey(string $config_file): void
-    {
-        if (!$this->api_key) $this->api_key = $this->prompt["api_key"] ?? null;
-        unset($this->prompt["api_key"]);
-        if (!$this->api_key) throw new FatalException("API key not found in configuration file at $config_file", true);
-        if (!$this->validate_api_key($this->api_key)) throw new FatalException("Invalid API key", true);
-    }
-
-    private function validateHistoryTokens(string $config_file): void
-    {
-        if (!$this->history_tokens) $this->history_tokens = $this->prompt["history_tokens"] ?? null;
-        unset($this->prompt["history_tokens"]);
-        if (!$this->history_tokens) throw new FatalException("history_tokens not found in configuration file at $config_file", true);
-        if (!is_int($this->history_tokens)) throw new FatalException("Invalid history_tokens in $config_file", true);
-    }
-
-    private function validate_api_key($api_key)
-    {
-        return (substr($api_key, 0, 3) === 'sk-' && strlen($api_key) === 51);
     }
 }
