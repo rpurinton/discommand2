@@ -8,7 +8,7 @@ use RPurinton\Discommand2\OpenAI\FunctionLoader;
 use RPurinton\Discommand2\OpenAI\FunctionHandler;
 use RPurinton\Discommand2\OpenAI\TokenCounter;
 use RPurinton\Discommand2\Core\Brain;
-use Rpurinton\Discommand2\Exceptions\OpenAIException;
+use RPurinton\Discommand2\Exceptions\OpenAIException;
 use RPurinton\Discommand2\Exceptions\ConfigurationException;
 
 
