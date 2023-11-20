@@ -3,6 +3,7 @@
 namespace RPurinton\Discommand2\OpenAI;
 
 use RPurinton\Discommand2\OpenAI\PromptBuilder;
+use RPurinton\Discommand2\OpenAI\RequestHandler;
 use RPurinton\Discommand2\OpenAI\StreamHandler;
 use RPurinton\Discommand2\OpenAI\FunctionLoader;
 use RPurinton\Discommand2\OpenAI\FunctionHandler;
@@ -15,6 +16,7 @@ use RPurinton\Discommand2\Exceptions\ConfigurationException;
 class Client
 {
     public $promptBuilder;
+    public $requestHandler;
     public $streamHandler;
     public $functionLoader;
     public $functionHandler;
@@ -24,7 +26,8 @@ class Client
 
     public function __construct(private Brain $brain, $token = null)
     {
-        $this->promptBuilder = new PromptBuilder();
+        $this->promptBuilder = new PromptBuilder($brain->myName);
+        $this->requestHandler = new RequestHandler();
         $this->streamHandler = new StreamHandler();
         $this->functionLoader = new FunctionLoader();
         $this->functionHandler = new FunctionHandler();
