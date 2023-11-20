@@ -23,16 +23,15 @@ class SqlClient extends ConfigLoader
 
     private function connect()
     {
-        $this->sql = mysqli_connect(
-            $this->config["sql"]["host"],
-            $this->myName,
-            $this->myName,
-            $this->myName
-        );
-
-        if (!$this->sql) {
-            $this->log("Failed to connect to MySQL: " . mysqli_connect_error(), "ERROR");
-            throw new SqlException("Failed to connect to MySQL: " . mysqli_connect_error());
+        try {
+            $this->sql = mysqli_connect(
+                $this->config["sql"]["host"],
+                $this->myName,
+                $this->myName,
+                $this->myName
+            );
+        } catch (\mysqli_sql_exception $e) {
+            throw new SqlException("Failed to connect to MySQL: " . $e->getMessage());
         }
 
         $this->log("SqlClient connected");
@@ -49,11 +48,9 @@ class SqlClient extends ConfigLoader
             }
         } catch (\mysqli_sql_exception $e) {
             throw new SqlException($e->getMessage());
-        } catch (\Throwable $e) {
-            throw new SqlException($e->getMessage());
-        } finally {
-            return $result;
         }
+
+        return $result;
     }
 
     public function count($result)
@@ -76,14 +73,16 @@ class SqlClient extends ConfigLoader
     {
         return mysqli_real_escape_string($this->sql, $text);
     }
-
     public function single($query)
     {
         $this->reconnectIfNeeded();
-        $result = mysqli_query($this->sql, $query);
-
-        if (!$result) {
-            throw new SqlException('MySQL query error: ' . mysqli_error($this->sql));
+        try {
+            $result = mysqli_query($this->sql, $query);
+            if (!$result) {
+                throw new SqlException('MySQL query error: ' . mysqli_error($this->sql));
+            }
+        } catch (\mysqli_sql_exception $e) {
+            throw new SqlException($e->getMessage());
         }
 
         return mysqli_fetch_assoc($result);
@@ -92,17 +91,21 @@ class SqlClient extends ConfigLoader
     public function multi($query): array
     {
         $this->reconnectIfNeeded();
-        if (!mysqli_multi_query($this->sql, $query)) {
-            throw new SqlException('MySQL multi-query error: ' . mysqli_error($this->sql));
-        }
-
         $result = [];
-        do {
-            if ($res = mysqli_store_result($this->sql)) {
-                $result[] = mysqli_fetch_all($res, MYSQLI_ASSOC);
-                mysqli_free_result($res);
+        try {
+            if (!mysqli_multi_query($this->sql, $query)) {
+                throw new SqlException('MySQL multi-query error: ' . mysqli_error($this->sql));
             }
-        } while (mysqli_more_results($this->sql) && mysqli_next_result($this->sql));
+
+            do {
+                if ($res = mysqli_store_result($this->sql)) {
+                    $result[] = mysqli_fetch_all($res, MYSQLI_ASSOC);
+                    mysqli_free_result($res);
+                }
+            } while (mysqli_more_results($this->sql) && mysqli_next_result($this->sql));
+        } catch (\mysqli_sql_exception $e) {
+            throw new SqlException($e->getMessage());
+        }
 
         return $result;
     }
