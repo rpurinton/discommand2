@@ -10,6 +10,7 @@ use RPurinton\Discommand2\OpenAI\TokenCounter;
 class Brain extends SqlClient
 {
     private LoopInterface $loop;
+    private RabbitMQ $bunny;
     private $modules = [];
     private $tokenCounter;
 
@@ -23,7 +24,7 @@ class Brain extends SqlClient
             error_reporting(E_ALL);
             $this->tokenCounter = new TokenCounter();
             $this->loop = Loop::get();
-            $this->modules["bunny"] = new RabbitMQ($this->config["bunny"] ?? [], $this->loop, $myName, $this->inbox(...), $this->logger);
+            $this->bunny = new RabbitMQ($this->config["bunny"] ?? [], $this->loop, $myName, $this->inbox(...), $this->logger);
         } catch (\Throwable $e) {
             // Handle other exceptions
             throw $e;
@@ -35,6 +36,7 @@ class Brain extends SqlClient
 
     public function __destruct()
     {
+        $this->bunny->disconnect();
         $this->loop->stop();
         parent::__destruct();
     }
@@ -42,7 +44,6 @@ class Brain extends SqlClient
     private function inbox(array $message): bool
     {
         try {
-            $this->logger->log("Received message " . trim(substr(print_r($message, true), 6)));
             $microtime = number_format(microtime(true), 6, '.', '');
             $role = "system";
             $content = $this->escape(json_encode($message));

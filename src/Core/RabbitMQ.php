@@ -77,7 +77,7 @@ class RabbitMQ
 		$this->disconnect();
 	}
 
-	private function disconnect()
+	public function disconnect()
 	{
 		if (isset($this->channel)) {
 			$this->channel->cancel($this->consumerTag);
