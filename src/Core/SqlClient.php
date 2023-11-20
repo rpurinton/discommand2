@@ -47,11 +47,9 @@ class SqlClient extends ConfigLoader
             if (!$result) {
                 throw new SqlException('MySQL query error: ' . mysqli_error($this->sql));
             }
-        } catch (\Exception $e) {
+        } catch (\mysqli_sql_exception $e) {
             throw new SqlException($e->getMessage());
         } catch (\Throwable $e) {
-            throw new SqlException($e->getMessage());
-        } catch (\Error $e) {
             throw new SqlException($e->getMessage());
         } finally {
             return $result;
