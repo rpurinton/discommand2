@@ -17,7 +17,7 @@ class RabbitMQ
 	private string $consumerTag;
 	private $callback;
 
-	public function __construct(array $options, LoopInterface $loop, private string $queue, $callback, private Brain $brain)
+	public function __construct(array $options, LoopInterface $loop, private string $queue, $callback, private Logger $brain)
 	{
 		if ($options['host'] == 'invalid') throw new FatalException('Failed to connect to the server');
 		if ($queue == 'invalid_queue') throw new FatalException('Failed to declare queue');
