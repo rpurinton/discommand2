@@ -29,11 +29,11 @@ class Brain extends SqlClient
             $this->loop = Loop::get();
             $this->bunny = new RabbitMQ($this->getConfig("bunny"), $this->loop, $myName, $this->inbox(...), $this->logger);
             $this->ai = new OpenAI\Client($this);
+            $this->log("$myName is alive.");
         } catch (\Throwable $e) {
             // Handle other exceptions
             throw $e;
         } finally {
-            $this->log("$myName is alive.");
             return $this;
         }
     }
