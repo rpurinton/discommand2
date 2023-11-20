@@ -9,9 +9,12 @@ class BrainTest extends TestCase
 {
     public function testCanBeCreated(): void
     {
+        $brain = new Brain('testBrain');
         $this->assertInstanceOf(
             Brain::class,
-            new Brain('testBrain')
+            $brain
         );
+        $this->assertEquals('testBrain', $brain->myName);
+        $brain->__destruct();
     }
 }
