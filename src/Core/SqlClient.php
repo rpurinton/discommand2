@@ -16,13 +16,6 @@ class SqlClient extends ConfigLoader
         return true;
     }
 
-    public function __destruct()
-    {
-        if ($this->sql && mysqli_ping($this->sql)) {
-            mysqli_close($this->sql);
-        }
-    }
-
     private function connect()
     {
         try {
