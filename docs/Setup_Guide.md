@@ -4,7 +4,7 @@ This guide provides instructions on how to set up the Discommand2 project on you
 
 ## Requirements
 
-- PHP 7.4 or higher
+- PHP 8.2 or higher
 - Composer for dependency management
 - RabbitMQ server
 - MySQL server
@@ -16,11 +16,11 @@ This guide provides instructions on how to set up the Discommand2 project on you
 3. Copy the example configuration files from `conf.d.example` to `conf.d` and update them with your specific settings.
 4. Set up the RabbitMQ server with the vhost, user, and permissions as specified in `bunny.json`.
 5. Create a MySQL database and user as specified in the configuration.
-6. Run `newBrain.php` with a specified name to provision a new Brain instance.
+6. Run `scripts/newBrain.php` with a specified name to provision a new Brain instance.
 
 ## Starting the Service
 
-- Use `runBrain.php` to start a Brain instance.
+- Use `scripts/runBrain.php` to start a Brain instance.
 - The service can be managed via systemd if set up accordingly.
 
 ## Updating the Project
