@@ -2,10 +2,10 @@
 
 namespace RPurinton\Discommand2\Core;
 
-use RPurinton\Discommand2\Core\GlobalExceptionHandler;
+use RPurinton\Discommand2\Core\Logger;
 use RPurinton\Discommand2\Exceptions\FatalException;
 
-class ConfigLoader extends GlobalExceptionHandler
+class ConfigLoader extends Logger
 {
     protected $config = [];
 
