@@ -17,7 +17,7 @@ class ConfigLoader
         try {
             $this->exceptionHandler = new GlobalExceptionHandler($this->logger);
             $this->logger = new Logger($myName);
-            foreach (glob(__DIR__ . "/../../conf.d/*.json") as $configFile) $this->config[basename($configFile, '.json')] = json_decode(file_get_contents($configFile), true);
+            foreach (glob(__DIR__ . "/../../configs/*.json") as $configFile) $this->config[basename($configFile, '.json')] = json_decode(file_get_contents($configFile), true);
             if (count($this->config)) $this->log("ConfigLoader initialized");
             else throw new ConfigurationException("No configuration files found in conf.d");
         } catch (\Throwable $e) {

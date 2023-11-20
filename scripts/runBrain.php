@@ -1,7 +1,7 @@
 #!/usr/bin/php -f
 <?php
 
-require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 use RPurinton\Discommand2\Core\Brain;
 
