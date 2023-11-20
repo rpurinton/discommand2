@@ -17,7 +17,7 @@ class ConfigLoader extends Logger
             if (count($this->config)) {
                 if (!isset($this->config["sql"])) throw new FatalException("No SQL configuration found in /configs/sql.json");
                 if (!isset($this->config["bunny"])) throw new FatalException("No RabbitMQ configuration found in /configs/bunny.json");
-                $this->log("ConfigLoader initialized");
+                $this->log("Configuration Loaded.");
             } else throw new FatalException("No configuration files found in /configs");
         } catch (\Throwable $e) {
             throw $e;

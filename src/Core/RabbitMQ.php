@@ -30,7 +30,7 @@ class RabbitMQ
 		Async\await($this->channel->qos(0, 1));
 		Async\await($this->channel->queueDeclare($this->queue));
 		$this->channel->consume($this->process(...), $this->queue, $this->consumerTag);
-		$this->brain->log("RabbitMQ initialized");
+		$this->brain->log("RabbitMQ connected");
 		return true;
 	}
 

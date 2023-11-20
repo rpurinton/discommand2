@@ -35,8 +35,8 @@ class Brain extends SqlClient
 
     public function __destruct()
     {
-        if ($this->bunny) $this->bunny->disconnect() or throw new Exception("Failed to disconnect from RabbitMQ");
-        if ($this->loop) $this->loop->stop() or throw new Exception("Failed to stop event loop");
+        if ($this->bunny) $this->bunny->disconnect();
+        if ($this->loop) $this->loop->stop();
         parent::__destruct();
     }
 

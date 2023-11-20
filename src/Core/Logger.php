@@ -23,7 +23,7 @@ class Logger
             if (!is_dir($this->log_dir) && !mkdir($this->log_dir, 0777, true)) {
                 throw new FatalException("Failed to create log directory: {$this->log_dir}");
             }
-            $this->log("Logger initialized");
+            $this->log("Booting $myName...");
         } catch (\Throwable $e) {
             echo $e->getMessage() . "\n";
             exit(1);
