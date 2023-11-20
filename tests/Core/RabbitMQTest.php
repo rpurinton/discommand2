@@ -4,20 +4,28 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use RPurinton\Discommand2\Core\RabbitMQ;
-use RPurinton\Discommand2\Core\Brain;
+use RPurinton\Discommand2\Core\Logger;
+use React\EventLoop\LoopInterface;
 
 class RabbitMQTest extends TestCase
 {
     public function testCanBeCreated(): void
     {
+        $mock_options = [
+            "host" => "localhost",
+            "vhost" => "discommand2",
+            "port" => 5672,
+            "user" => "discommand",
+            "password" => "discommand"
+        ];
+        $mock_loop = $this->createMock(LoopInterface::class);
         $mock_callback = function ($message) {
             return true;
         };
-        $mock_brain = $this->createMock(Brain::class);
-        $mock_brain->myName = 'testBrain';
+        $mock_logger = $this->createMock(Logger::class);
         $this->assertInstanceOf(
             RabbitMQ::class,
-            new RabbitMQ(['host' => 'localhost'], new React\EventLoop\StreamSelectLoop(), 'test_queue', $mock_callback, $mock_brain)
+            new RabbitMQ($mock_options, $mock_loop, 'testBrain', $mock_callback, $mock_logger)
         );
     }
 }
