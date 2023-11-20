@@ -1,7 +1,9 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
+use PSpell\Config;
 use RPurinton\Discommand2\Core\SqlClient;
+use RPurinton\Discommand2\Exceptions\ConfigurationException;
 use RPurinton\Discommand2\Exceptions\SqlException;
 
 class SqlClientTest extends TestCase
@@ -25,7 +27,7 @@ class SqlClientTest extends TestCase
 
     public function testConnect()
     {
-        $this->expectException(SqlException::class);
+        $this->expectException(ConfigurationException::class);
         $this->sqlClient = new SqlClient("invalid-brain-name");
     }
 
