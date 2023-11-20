@@ -34,8 +34,15 @@ class Client
         $this->prompt = json_decode(file_get_contents($config_file), true);
         if (!$token) $token = $this->prompt["token"];
         unset($this->prompt["token"]);
+        $this->validate_token($token);
         $this->client = \OpenAI::client($token);
         if (!$this->client) throw new OpenAIException("Failed to initialize OpenAI client");
         $brain->log("OpenAI initialized");
+    }
+
+    private function validate_token($token)
+    {
+        // token must look like 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
+        if (!preg_match('/^sk-[a-zA-Z0-9]{32}$/', $token)) throw new OpenAIException("Invalid OpenAI token");
     }
 }
