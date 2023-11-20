@@ -7,8 +7,8 @@ After=network.target
 Type=simple
 User=%i
 Group=%i
-ExecStart=/var/www/discommand2/runBrain.php %i
-#ExecStartPost=/var/www/discommand2/sendCrashAlert.php %i
+ExecStart=/var/www/discommand2/scripts/runBrain.php %i
+#ExecStartPost=/var/www/discommand2/scripts/sendCrashAlert.php %i
 Restart=on-failure
 RestartSec=5
 
