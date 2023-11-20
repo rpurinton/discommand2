@@ -6,6 +6,7 @@ use RPurinton\Discommand2\Exceptions\FatalException;
 
 class Logger
 {
+    public bool $alive = false;
     private float $boot_microtime = 0;
     private float $last_microttime = 0;
     public string $log_dir;
@@ -72,7 +73,7 @@ class Logger
             echo ($e->getMessage() . "\n");
         } finally {
             if ($exception instanceof FatalException) {
-                echo ("I'm sorry to inform you but {$this->myName} had a fatal error and has passed away. D:\n");
+                if ($this->alive) echo ("I'm sorry to inform you but {$this->myName} had a fatal error and has passed away. D:\n");
                 exit(1);
             }
         }

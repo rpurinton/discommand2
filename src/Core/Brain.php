@@ -28,6 +28,7 @@ class Brain extends SqlClient
         $this->bunny = new RabbitMQ($this->getConfig("bunny"), $this->loop, $myName, $this->inbox(...), $this) or throw new FatalException("Failed to initialize RabbitMQ");
         $this->ai = new OpenAI\Client($this) or throw new FatalException("Failed to initialize OpenAI client");
         $this->tokenCounter = new TokenCounter() or throw new FatalException("Failed to initialize TokenCounter");
+        $this->alive = true;
         $this->log("$myName is alive.") or throw new FatalException("Failed to log");
         return $this;
     }
