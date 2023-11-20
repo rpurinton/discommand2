@@ -4,6 +4,7 @@ This guide provides instructions on how to set up the Discommand2 project on you
 
 ## Requirements
 
+- Linux-based operating system (tested on CentOS 9)
 - PHP 8.2 or higher
 - Composer for dependency management
 - RabbitMQ server
