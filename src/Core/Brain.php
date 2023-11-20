@@ -21,7 +21,7 @@ class Brain extends SqlClient
     public function __construct(string $myName)
     {
         parent::__construct($myName) or throw new FatalException("Failed to initialize SQL client");
-        $this->memory = new MemoryManager() or throw new FatalException("Failed to initialize MemoryManager");
+        $this->memory = new MemoryManager($this) or throw new FatalException("Failed to initialize MemoryManager");
         $this->loop = Loop::get() or throw new FatalException("Failed to initialize event loop");
         $this->bunny = new RabbitMQ($this->getConfig("bunny"), $this->loop, $this->inbox(...), $this) or throw new FatalException("Failed to initialize RabbitMQ");
         $this->ai = new OpenAI\Client($this) or throw new FatalException("Failed to initialize OpenAI client");
@@ -39,6 +39,10 @@ class Brain extends SqlClient
 
     private function inbox(array $message): bool
     {
-        $this->MemoryM
+        $this->memory->store($message) or throw new Exception("Failed to store message");
+        if (isset($message["RSVP"]) && $message["RSVP"]) {
+            $this->ai->requestHandler->handleRequest($message) or throw new Exception("Failed to handle request");
+        }
+        return true;
     }
 }
