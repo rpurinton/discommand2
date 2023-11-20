@@ -13,8 +13,7 @@ class GlobalExceptionHandler
     public function handleException(\Throwable $exception): void
     {
         if (!$this->logger) {
-            echo ("Logging exception " . get_class($exception) . " details: " . $exception->getMessage() . "\n");
-            die();
+            die(($exception->getMessage() . "\n"));
         } else {
             !$this->logger->log($exception->getMessage(), 'ERROR');
         }
