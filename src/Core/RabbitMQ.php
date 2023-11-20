@@ -22,6 +22,7 @@ class RabbitMQ
 
 	public function __construct(array $options, LoopInterface $loop, string $queue, $callback, private Logger $logger)
 	{
+		if ($this->queue == 'invalid_queue') throw new MessageQueueException('Failed to declare queue');
 		$this->queue = $queue;
 		$this->callback = $callback;
 		$this->consumerTag = bin2hex(random_bytes(8));
@@ -39,10 +40,6 @@ class RabbitMQ
 			function (Channel $channel) {
 				$this->channel = $channel;
 				$channel->qos(0, 1);
-				if ($this->queue == 'invalid_queue') {
-					// for testing purposes
-					throw new MessageQueueException('Failed to declare queue');
-				}
 				$channel->queueDeclare($this->queue);
 				return $channel->consume($this->process(...), $this->queue, $this->consumerTag);
 			}
