@@ -10,7 +10,7 @@
     },
     "autoload": {
         "psr-4": {
-            "RPurinton\\Discommand2\\": "src/"
+            "RPurinton\\Discommand\\": "src/"
         }
     },
     "config": {
