@@ -1,10 +1,10 @@
 <?php
 
-namespace RPurinton\Discommand2\OpenAI;
+namespace RPurinton\Discommand\OpenAI;
 
-use RPurinton\Discommand2\Core\Brain;
-use RPurinton\Discommand2\Exceptions\Exception;
-use RPurinton\Discommand2\Exceptions\FatalException;
+use RPurinton\Discommand\Core\Brain;
+use RPurinton\Discommand\Exceptions\Exception;
+use RPurinton\Discommand\Exceptions\FatalException;
 
 class PromptBuilder
 {

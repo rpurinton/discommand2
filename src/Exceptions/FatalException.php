@@ -1,6 +1,6 @@
 <?php
 
-namespace RPurinton\Discommand2\Exceptions;
+namespace RPurinton\Discommand\Exceptions;
 
 class FatalException extends \Exception
 {

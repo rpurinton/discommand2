@@ -1,6 +1,6 @@
 <?php
 
-namespace RPurinton\Discommand2\OpenAI;
+namespace RPurinton\Discommand\OpenAI;
 
 use TikToken\Encoder;
 
@@ -11,7 +11,6 @@ class TokenCounter
     {
         $this->encoder = new Encoder();
     }
-
     public function count($text)
     {
         return count($this->encoder->encode($text));

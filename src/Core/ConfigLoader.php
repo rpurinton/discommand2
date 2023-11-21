@@ -1,9 +1,9 @@
 <?php
 
-namespace RPurinton\Discommand2\Core;
+namespace RPurinton\Discommand\Core;
 
-use RPurinton\Discommand2\Core\Logger;
-use RPurinton\Discommand2\Exceptions\FatalException;
+use RPurinton\Discommand\Core\Logger;
+use RPurinton\Discommand\Exceptions\FatalException;
 
 class ConfigLoader extends Logger
 {

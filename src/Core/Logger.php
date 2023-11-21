@@ -1,8 +1,8 @@
 <?php
 
-namespace RPurinton\Discommand2\Core;
+namespace RPurinton\Discommand\Core;
 
-use RPurinton\Discommand2\Exceptions\FatalException;
+use RPurinton\Discommand\Exceptions\FatalException;
 
 class Logger
 {

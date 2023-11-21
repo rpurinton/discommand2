@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-use RPurinton\Discommand2\Exceptions\FatalException;
+use RPurinton\Discommand\Exceptions\FatalException;
 
 class FatalExceptionTest extends TestCase
 {

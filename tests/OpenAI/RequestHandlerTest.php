@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-use RPurinton\Discommand2\OpenAI\RequestHandler;
-use RPurinton\Discommand2\Core\Brain;
+use RPurinton\Discommand\OpenAI\RequestHandler;
+use RPurinton\Discommand\Core\Brain;
 
 class RequestHandlerTest extends TestCase
 {

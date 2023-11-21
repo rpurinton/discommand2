@@ -1,6 +1,6 @@
 <?php
 
-namespace RPurinton\Discommand2\Memory;
+namespace RPurinton\Discommand\Memory;
 
 class Store
 {

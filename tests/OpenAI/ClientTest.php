@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-use RPurinton\Discommand2\OpenAI\Client;
-use RPurinton\Discommand2\Core\Brain;
+use RPurinton\Discommand\OpenAI\Client;
+use RPurinton\Discommand\Core\Brain;
 
 class ClientTest extends TestCase
 {

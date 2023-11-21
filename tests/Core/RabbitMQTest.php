@@ -6,10 +6,10 @@ use Bunny\Async\Client;
 use Bunny\Channel;
 use Bunny\Message;
 use PHPUnit\Framework\TestCase;
-use RPurinton\Discommand2\Core\RabbitMQ;
-use RPurinton\Discommand2\Core\Logger;
+use RPurinton\Discommand\Core\RabbitMQ;
+use RPurinton\Discommand\Core\Logger;
 use React\EventLoop\Loop;
-use RPurinton\Discommand2\Exceptions\FatalException;
+use RPurinton\Discommand\Exceptions\FatalException;
 
 class RabbitMQTest extends TestCase
 {

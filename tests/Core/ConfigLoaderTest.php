@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-use RPurinton\Discommand2\Core\ConfigLoader;
+use RPurinton\Discommand\Core\ConfigLoader;
 
 class ConfigLoaderTest extends TestCase
 {

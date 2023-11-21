@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-use RPurinton\Discommand2\Memory\Recall;
+use RPurinton\Discommand\Memory\Recall;
 
 class RecallTest extends TestCase
 {

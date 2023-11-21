@@ -1,9 +1,9 @@
 <?php
 
-namespace RPurinton\Discommand2\OpenAI;
+namespace RPurinton\Discommand\OpenAI;
 
-use RPurinton\Discommand2\Core\Brain;
-use RPurinton\Discommand2\Exceptions\FatalException;
+use RPurinton\Discommand\Core\Brain;
+use RPurinton\Discommand\Exceptions\FatalException;
 
 class RequestHandler
 {

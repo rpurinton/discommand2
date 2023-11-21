@@ -1,14 +1,14 @@
 <?php
 
-namespace RPurinton\Discommand2\Core;
+namespace RPurinton\Discommand\Core;
 
 use React\Async;
 use Bunny\Async\Client;
 use Bunny\Channel;
 use Bunny\Message;
-use RPurinton\Discommand2\Exceptions\FatalException;
+use RPurinton\Discommand\Exceptions\FatalException;
 
-class RabbitMQ
+class MessageQueue
 {
 	private ?Client $client;
 	private ?Channel $channel;

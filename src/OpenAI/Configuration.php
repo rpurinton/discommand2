@@ -1,24 +1,23 @@
 <?php
 
-namespace RPurinton\Discommand2\OpenAI;
+namespace RPurinton\Discommand\OpenAI;
 
-use RPurinton\Discommand2\Exceptions\FatalException;
+use RPurinton\Discommand\Exceptions\FatalException;
 
-class ConfigLoader
+class Configuration
 {
     public ?string $api_key = null;
     public ?int $history_tokens = null;
-    public ?array $prompt = null;
+    public array $base_prompt = [];
 
-    public function __construct(private string $prompt_dir)
+    public function __construct(public string $myName)
     {
     }
 
-    public function getBaseMessages(): array
+    public function getBasePrompt(): array
     {
         $files = glob($this->prompt_dir . "/*.json");
         $files = array_merge($files, glob($this->prompt_dir . "/*.txt"));
-        $messages = [];
         foreach ($files as $file) {
             if (is_file($file) && basename($file) !== "openai.json") {
                 $messages[] = ["role" => "system", "content" => "[" . basename($file) . "]\n\n" . file_get_contents($file) . "\n\n"];
@@ -31,8 +30,6 @@ class ConfigLoader
     {
         $this->loadConfig($this->prompt_dir . "/openai.json");
         $this->validateConfig($this->prompt_dir . "/openai.json");
-        $config = $this->prompt;
-        $config["messages"] = $this->getBaseMessages();
         return $this->prompt;
     }
 

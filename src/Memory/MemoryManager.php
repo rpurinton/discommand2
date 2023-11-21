@@ -1,8 +1,8 @@
 <?php
 
-namespace RPurinton\Discommand2\Memory;
+namespace RPurinton\Discommand\Memory;
 
-use RPurinton\Discommand2\Core\Brain;
+use RPurinton\Discommand\Core\Brain;
 
 class MemoryManager
 {
