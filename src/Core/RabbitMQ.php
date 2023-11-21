@@ -3,36 +3,35 @@
 namespace RPurinton\Discommand2\Core;
 
 use React\Async;
-use React\EventLoop\LoopInterface;
 use Bunny\Async\Client;
 use Bunny\Channel;
 use Bunny\Message;
-use RPurinton\Discommand2\Core\Logger;
 use RPurinton\Discommand2\Exceptions\FatalException;
 
 class RabbitMQ
 {
-	private Client $client;
-	private ?Channel $channel = null;
-	private string $consumerTag;
-	private string $queue = 'invalid_queue';
+	private ?Client $client;
+	private ?Channel $channel;
+	private ?string $consumerTag;
+	private ?string $queue;
 
-	public function __construct(private array $options, LoopInterface $loop, private $callback, private Logger $brain)
+	public function __construct(private Brain $brain, private callable $callback)
 	{
+		$this->brain->log("RabbitMQ initializing...");
+		$this->connect() or throw new FatalException('Failed to establish the connection');
+	}
 
+	public function connect(): bool
+	{
 		$this->queue = $this->brain->myName;
-		if ($options['host'] == 'invalid') throw new FatalException('Failed to connect to the server');
-		if ($this->queue == 'invalid_queue') throw new FatalException('Failed to declare queue');
 		$this->consumerTag = bin2hex(random_bytes(8));
-		$this->client = new Client($loop, $options);
-		if (!$this->client) throw new FatalException('Failed to establish the client');
-		$this->client = Async\await($this->client->connect());
-		$this->channel = Async\await($this->client->channel());
-		if (!$this->channel) throw new FatalException('Failed to establish the channel');
-		Async\await($this->channel->qos(0, 1));
-		Async\await($this->channel->queueDeclare($this->queue));
-		$this->channel->consume($this->process(...), $this->queue, $this->consumerTag);
-		$this->brain->log("RabbitMQ connected.");
+		$this->client = new Client($this->brain->loop, $this->brain->getConfig("bunny")) or throw new FatalException('Failed to establish the client');
+		$this->client = Async\await($this->client->connect()) or throw new FatalException('Failed to establish the connection');
+		$this->channel = Async\await($this->client->channel()) or throw new FatalException('Failed to establish the channel');
+		Async\await($this->channel->qos(0, 1)) or throw new FatalException('Failed to set the QoS');
+		Async\await($this->channel->queueDeclare($this->queue)) or throw new FatalException('Failed to declare the queue');
+		$this->channel->consume($this->process(...), $this->queue, $this->consumerTag) or throw new FatalException('Failed to consume the queue');
+		$this->brain->log("RabbitMQ consuming.") or throw new FatalException('Failed to log');
 		return true;
 	}
 
@@ -64,11 +63,6 @@ class RabbitMQ
 		return Async\await($this->channel->publish(json_encode($data), [], '', $queue));
 	}
 
-	public function __destruct()
-	{
-		$this->disconnect();
-	}
-
 	public function disconnect()
 	{
 		if (isset($this->channel)) {
@@ -79,5 +73,10 @@ class RabbitMQ
 		if (isset($this->client)) {
 			$this->client->disconnect();
 		}
+	}
+
+	public function __destruct()
+	{
+		$this->disconnect();
 	}
 }
